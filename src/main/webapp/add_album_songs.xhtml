@@ -83,6 +83,14 @@
 				</div>
 			</c:if>
 			<c:if test="#{not empty spotify.clientSecret}">
+				<div style="margin-bottom: 8px;">
+					<a href="user.xhtml">Home</a>
+					<a href="album_lookup.xhtml">Add Album</a>
+					<a href="browse_albums.xhtml">View Your Albums</a>
+					<a href="browse_songs.xhtml">View Your Songs</a>
+				</div>
+			</c:if>
+			<c:if test="#{not empty spotify.clientSecret}">
 				<c:if test="#{not empty album_add.results}">
 					<div class="album-head">
 						<h:commandButton action="#{album_add.saveSongs}" value="Add" />
@@ -114,8 +122,10 @@
 										<tr>
 											<td>
 												<c:forEach var="song" items="#{album_add.results}">
-													#{song.trackNumber}.&nbsp;
-													#{song.name}<br />
+													<c:if test="#{not empty song.name}">
+														#{song.trackNumber}.&nbsp;
+														#{song.name}<br />
+													</c:if>
 												</c:forEach>
 											</td>
 										</tr>

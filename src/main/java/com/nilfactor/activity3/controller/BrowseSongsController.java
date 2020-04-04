@@ -17,7 +17,7 @@ public class BrowseSongsController {
 		songs = SongService.getAllSongs();
 	}
 	
-	public List<SpotifySong> getAlbums() {
+	public List<SpotifySong> getSongs() {
 		return songs;
 	}
 	

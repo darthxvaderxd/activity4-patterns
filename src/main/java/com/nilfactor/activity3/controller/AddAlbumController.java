@@ -38,12 +38,21 @@ public class AddAlbumController {
 		if (newId == null || id.equals(newId)) {
 			// do nothing
 		} else {
+			results = null;
 			id = newId;
 			album = loadData("album");
 			artist = loadData("band");
 			picture = loadData("picture");
 			releaseDate = loadData("date");
 			results = SongService.findSongForAlbum(id);
+			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+			HttpServletResponse res = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+			try {
+				res.sendRedirect(req.getContextPath() + "/faces/add_album_songs.xhtml");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

@@ -1,6 +1,5 @@
 package com.nilfactor.activity3.util;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -14,7 +13,6 @@ import com.nilfactor.activity3.model.SpotifyAlbum;
 import com.nilfactor.activity3.model.SpotifySong;
 
 import java.net.URLEncoder;
-import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +29,7 @@ public class SpotifyClient {
 				+ URLEncoder.encode("http://localhost:8080/Activity4-Patterns/faces/spotify.xhtml");
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	public static List<SpotifySong> lookupAlbumTracks(String id, Long offset) throws Exception {
 		String authToken = SpotifyController.getSessionToken();
 		List<SpotifySong> spotifySongs = new ArrayList<SpotifySong>();
@@ -61,18 +59,21 @@ public class SpotifyClient {
 					if (songs.size() > 0) {
 						for (int i = 0; i < songs.size(); i += 1) {
 							JSONObject song = songs.get(i);
+							
+							long duration = (long) song.get("duration_ms");
+							long seconds = duration / 1000;  
+									
 							SpotifySong spotifySong = new SpotifySong();
 							spotifySong.setId((String) song.get("id"));
 							spotifySong.setName((String) song.get("name"));
 							spotifySong.setAlbum(id);
-							spotifySong.setDisc((Long) song.get("disc_number"));
+							spotifySong.setDisc((long) song.get("disc_number"));
 							spotifySong.setTrackNumber((Long) song.get("track_number"));
-							spotifySong.setDuration((Long) song.get("duration_ms"));
+							spotifySong.setDuration(seconds);
 							spotifySong.setPreviewUrl((String) song.get("preview_url"));
 							spotifySongs.add(spotifySong);
 						}
 						
-						Long totalTracks = (Long) data.get("total");
 						String nextTrackLink = (String) data.get("next");
 						
 						if (nextTrackLink != null) {

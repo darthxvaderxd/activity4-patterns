@@ -6,13 +6,19 @@ import java.util.List;
 import com.nilfactor.activity3.model.SpotifyAlbum;
 import com.nilfactor.activity3.util.SpotifyClient;
 
+import javax.ejb.*;
+
+@Stateless
+@TransactionManagement(TransactionManagementType.CONTAINER)
 public class AlbumService {
 	private static List<SpotifyAlbum> albums = new ArrayList<SpotifyAlbum>();
 	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public static int getAlbumCount() {
 		return albums.size();
 	}
 	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public static void addAlbum(String id) {
 		try {
 			SpotifyAlbum album = SpotifyClient.lookupAlbum(id);
@@ -23,14 +29,17 @@ public class AlbumService {
 		}
 	}
 	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public static void addAlbum(SpotifyAlbum album) {
 		albums.add(album);
 	}
 	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public static void removeAlbum(SpotifyAlbum album) {
 		albums.remove(album);
 	}
 	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public static SpotifyAlbum getAlbum(String id) {
 		for (int i = 0; i < albums.size(); i += 1) {
 			SpotifyAlbum album = albums.get(i);
@@ -42,10 +51,12 @@ public class AlbumService {
 		return null;
 	}
 	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public static List<SpotifyAlbum> getAllAlbums() {
 		return albums;
 	}
 	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public static List<SpotifyAlbum> findAlbumsInService(String search) {
 		try {
 			return SpotifyClient.lookupAlbums(search);

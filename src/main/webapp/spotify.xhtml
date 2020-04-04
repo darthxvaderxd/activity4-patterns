@@ -51,6 +51,14 @@
 				</div>
 			</c:if>
 			<c:if test="#{not empty spotify.clientSecret}">
+				<div style="margin-bottom: 8px;">
+					<a href="user.xhtml">Home</a>
+					<a href="album_lookup.xhtml">Add Album</a>
+					<a href="browse_albums.xhtml">View Your Albums</a>
+					<a href="browse_songs.xhtml">View Your Songs</a>
+				</div>
+			</c:if>
+			<c:if test="#{not empty spotify.clientSecret}">
 				<div class="ok">
 					You have authorized with your spotify account.
 					<a href="user.xhtml">Go Back</a>
