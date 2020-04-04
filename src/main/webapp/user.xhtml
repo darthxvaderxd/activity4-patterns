@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core">
+	<h:head>
+		<title>Welcome</title>
+		<style>
+				h1 { width: 100%; background-color: #777; border: 1px solid #222; color: white }
+				div { padding: 5px; }
+				input { border-radius: 5px; }
+				.warning { color: red; }
+				.right { text-align: right; }
+				.container { border: 1px solid #222; border-radius: 5px; max-width: 500px; }
+		</style>
+	</h:head>
+	<h:body>
+		<h:form>
+			<h1>
+				#{login.message}
+				<h:commandButton action="#{login.logout}" value="Logout" />
+			</h1>
+			<c:if test="#{empty spotify.clientSecret}">
+				<div>
+					<a href="spotify.xhtml">Authorize Spotify Account</a>
+				</div>
+			</c:if>
+			<c:if test="#{not empty spotify.clientSecret}">
+				<div>
+					<a href="album_lookup.xhtml">Add Album</a>
+				</div>
+				<div>
+					<a href="song_lookup.xhtml">Add Song</a>
+				</div>
+				<div>
+					<a href="my_music.xhtml">View Library</a>
+				</div>
+			</c:if>
+		</h:form>
+	</h:body>
+</html>

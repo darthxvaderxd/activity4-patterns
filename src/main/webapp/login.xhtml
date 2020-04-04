@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+<h:head>
+	<title>Welcome</title>
+	<style>
+		div { padding: 5px; }
+		input { border-radius: 5px; }
+		.warning { color: red; }
+		.right { text-align: right; }
+		.container { border: 1px solid #222; border-radius: 5px; max-width: 500px; }
+	</style>
+</h:head>
+<h:body>
+	<h:form>
+		<div class="container">
+			<div>Please Login</div>
+			<c:if test="#{not empty login.message}">
+				<div class="warning">#{login.message}</div>
+			</c:if>
+			<div>
+				<h:outputText for="username" value="Username:" />
+				<h:inputText id="username" value="#{login.username}" />
+				<h:message for="username"></h:message>
+			</div>
+			
+			<div>
+				<h:outputText for="password" value="Password:" />
+				<h:inputSecret id="password" value="#{login.password}" />
+				<h:message for="password"></h:message>
+			</div>
+			<div class="right">
+				<h:commandButton action="#{login.validateLogin}" value="Login" />
+			</div>
+		</div>
+	</h:form>
+</h:body>
+</html>
