@@ -20,6 +20,10 @@
 				#{login.message}
 				<h:commandButton action="#{login.logout}" value="Logout" />
 			</h1>
+			<div>
+				You have added #{main.songCount} songs to your library<br />
+				You have added #{main.albumCount} albums to your library<br />
+			</div>
 			<c:if test="#{empty spotify.clientSecret}">
 				<div>
 					<a href="spotify.xhtml">Authorize Spotify Account</a>
@@ -29,11 +33,14 @@
 				<div>
 					<a href="album_lookup.xhtml">Add Album</a>
 				</div>
-				<div>
+				<!--div>
 					<a href="song_lookup.xhtml">Add Song</a>
+				</div-->
+				<div>
+					<a href="browse_albums.xhtml">View Your Albums</a>
 				</div>
 				<div>
-					<a href="my_music.xhtml">View Library</a>
+					<a href="browse_songs.xhtml">View Your Songs</a>
 				</div>
 			</c:if>
 		</h:form>

@@ -9,6 +9,10 @@ import com.nilfactor.activity3.util.SpotifyClient;
 public class SongService {
 	private static List<SpotifySong> songs = new ArrayList<SpotifySong>();
 	
+	public static int getSongCount() {
+		return songs.size();
+	}
+	
 	public static void addSong(SpotifySong song) {
 		songs.add(song);
 	}

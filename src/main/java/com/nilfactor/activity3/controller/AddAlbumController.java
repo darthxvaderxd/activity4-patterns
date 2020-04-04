@@ -1,12 +1,15 @@
 package com.nilfactor.activity3.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.nilfactor.activity3.data.AlbumService;
 import com.nilfactor.activity3.data.SongService;
 import com.nilfactor.activity3.model.SpotifySong;
 
@@ -21,79 +24,80 @@ public class AddAlbumController {
 	private List<SpotifySong> results;
 	
 	public AddAlbumController() {
-		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-		if (id == null) {
-			id = req.getParameter("id");
-		}
-		
-		if (album == null) {
-			album = req.getParameter("album");
-		}
-		
-		if (artist == null) {
-			artist = req.getParameter("band");
-		}
-		
-		if (picture == null) {
-			picture = req.getParameter("picture");
-		}
-		
-		if (releaseDate == null) {
-			releaseDate = req.getParameter("date");
-		}
-		
+		id = loadData("id");
+		album = loadData("album");
+		artist = loadData("band");
+		picture = loadData("picture");
+		releaseDate = loadData("date");
 		results = SongService.findSongForAlbum(id);
 	}
 	
+	private void loadGetParams() {
+		String newId = loadData("id");
+		
+		if (newId == null || id.equals(newId)) {
+			// do nothing
+		} else {
+			id = newId;
+			album = loadData("album");
+			artist = loadData("band");
+			picture = loadData("picture");
+			releaseDate = loadData("date");
+			results = SongService.findSongForAlbum(id);
+		}
+	}
+	
+	private String loadData(String name) {
+		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		return req.getParameter(name);
+	}
+	
 	public String getId() {
+		loadGetParams();
 		return id;
 	}
 	
-	public void setId(String id) {
-		this.id = id;
-	}
-	
 	public String getAlbum() {
+		loadGetParams();
 		return album;
 	}
 
-	public void setAlbum(String album) {
-		this.album = album;
-	}
-
 	public String getArtist() {
+		loadGetParams();
 		return artist;
 	}
 
-	public void setArtist(String artist) {
-		this.artist = artist;
-	}
-
 	public String getPicture() {
+		loadGetParams();
 		return picture;
 	}
 
-	public void setPicture(String picture) {
-		this.picture = picture;
-	}
-
 	public String getReleaseDate() {
+		loadGetParams();
 		return releaseDate;
-	}
-
-	public void setReleaseDate(String releaseDate) {
-		this.releaseDate = releaseDate;
 	}
 
 	public List<SpotifySong> getResults() {
 		return results;
 	}
 	
-	public void setResults(List<SpotifySong> results) {
-		this.results = results;
-	}
-	
-	public String save() {
+	public String saveSongs() {
+		if (results != null) {
+			AlbumService.addAlbum(id);
+			
+			for (int i = 0; i < results.size(); i += 1) {
+				SongService.addSong(results.get(i));
+			}
+			
+			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+			HttpServletResponse res = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+			try {
+				res.sendRedirect(req.getContextPath() + "/faces/user.xhtml");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return "saved";
 	}
 }

@@ -1,5 +1,6 @@
 package com.nilfactor.activity3.util;
 
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -13,6 +14,7 @@ import com.nilfactor.activity3.model.SpotifyAlbum;
 import com.nilfactor.activity3.model.SpotifySong;
 
 import java.net.URLEncoder;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,7 @@ public class SpotifyClient {
 				+ URLEncoder.encode("http://localhost:8080/Activity4-Patterns/faces/spotify.xhtml");
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static List<SpotifySong> lookupAlbumTracks(String id, Long offset) throws Exception {
 		String authToken = SpotifyController.getSessionToken();
 		List<SpotifySong> spotifySongs = new ArrayList<SpotifySong>();
@@ -88,6 +91,60 @@ public class SpotifyClient {
 	}
 	
 	@SuppressWarnings({ "unchecked", "deprecation" })
+	public static SpotifyAlbum lookupAlbum(String id) throws Exception {
+		String authToken = SpotifyController.getSessionToken();
+		if (authToken != null) {
+			String uri = "https://api.spotify.com/v1/albums/" + URLEncoder.encode(id);
+			
+			HttpGet req = new HttpGet(uri);
+			req.addHeader("Authorization", "Bearer " + authToken);
+			
+			try (CloseableHttpResponse response = httpClient.execute(req)) {
+				String httpResponse = response.getStatusLine().toString();
+				JSONObject data = (JSONObject) JSONValue.parse(EntityUtils.toString(response.getEntity()));;
+				JSONObject error = (JSONObject) data.get("error");
+				
+				System.out.println("Debug httpResponse => " + httpResponse);
+				System.out.println("Debug dataString => " + data.toJSONString());
+				
+				
+				if (error != null && (Long) error.get("status") == 401) {
+					System.out.println("Need to refresh token?");
+					SpotifyController.rejectSessionToken();
+				} else {
+					SpotifyAlbum spotifyAlbum = new SpotifyAlbum();
+					
+					List<JSONObject> images = (List<JSONObject>) data.get("images");
+					JSONObject image = images.get(0);
+					
+					List<JSONObject> jsonArtists = (List<JSONObject>) data.get("artists");
+					List<String> artists = new ArrayList<String>();
+					
+					for (int m = 0; m < jsonArtists.size(); m += 1) {
+						JSONObject artist = (JSONObject) jsonArtists.get(m);
+						artists.add((String) artist.get("name"));
+					}
+					
+					spotifyAlbum.setId(id);
+					spotifyAlbum.setImageHeight((long) image.get("height"));
+					spotifyAlbum.setImageWidth((long) image.get("width"));
+					spotifyAlbum.setImageLink(URLDecoder.decode((String) image.get("url")));
+					spotifyAlbum.setReleaseDate((String) data.get("release_date"));
+					spotifyAlbum.setName((String) data.get("name"));
+					spotifyAlbum.setTotalTracks((long) data.get("total_tracks"));
+					spotifyAlbum.setLink(URLDecoder.decode((String) data.get("href")));
+					spotifyAlbum.setArtists(artists);
+					spotifyAlbum.setSongs(lookupAlbumTracks(id, (long) 0));
+					
+					return spotifyAlbum;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	public static List<SpotifyAlbum> lookupAlbums(String album) throws Exception {
 		String authToken = SpotifyController.getSessionToken();
 		List<SpotifyAlbum> spotifyAlbums = new ArrayList<SpotifyAlbum>();
@@ -140,7 +197,6 @@ public class SpotifyClient {
 							spotifyAlbum.setTotalTracks((long) a.get("total_tracks"));
 							spotifyAlbum.setLink(URLDecoder.decode((String) a.get("href")));
 							spotifyAlbum.setArtists(artists);
-							
 							spotifyAlbums.add(spotifyAlbum);
 						}
 					}

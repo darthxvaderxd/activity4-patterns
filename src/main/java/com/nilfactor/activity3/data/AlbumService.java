@@ -9,6 +9,20 @@ import com.nilfactor.activity3.util.SpotifyClient;
 public class AlbumService {
 	private static List<SpotifyAlbum> albums = new ArrayList<SpotifyAlbum>();
 	
+	public static int getAlbumCount() {
+		return albums.size();
+	}
+	
+	public static void addAlbum(String id) {
+		try {
+			SpotifyAlbum album = SpotifyClient.lookupAlbum(id);
+			albums.add(album);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public static void addAlbum(SpotifyAlbum album) {
 		albums.add(album);
 	}

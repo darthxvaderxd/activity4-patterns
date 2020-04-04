@@ -25,4 +25,11 @@
 			<to-view-id>/album_lookup.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/add_album_songs.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>search</from-outcome>
+			<to-view-id>/user.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 </faces-config>

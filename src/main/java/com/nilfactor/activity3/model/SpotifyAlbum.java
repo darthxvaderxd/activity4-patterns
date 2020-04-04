@@ -2,6 +2,8 @@ package com.nilfactor.activity3.model;
 
 import java.util.List;
 
+import com.nilfactor.activity3.data.SongService;
+
 public class SpotifyAlbum {
 	private String imageLink;
 	private long imageWidth;
@@ -12,6 +14,7 @@ public class SpotifyAlbum {
 	private String name;
 	private String link;
 	private String id;
+	List<SpotifySong> songs;
 	
 	public String getImageLink() {
 		return imageLink;
@@ -87,5 +90,17 @@ public class SpotifyAlbum {
 	
 	public String getAllArtistsAsString() {
 		return String.join(", ", artists);
+	}
+	
+	public void setSongs(List<SpotifySong> songs) {
+		this.songs = songs;
+	}
+	
+	public List<SpotifySong> getSongs() {
+		if (songs == null) {
+			songs = SongService.findSongForAlbum(id);
+		}
+		
+		return songs;
 	}
 }

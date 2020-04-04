@@ -85,7 +85,7 @@
 			<c:if test="#{not empty spotify.clientSecret}">
 				<c:if test="#{not empty album_add.results}">
 					<div class="album-head">
-						<input type="button" value="add" action="#{album_add.save}" />
+						<h:commandButton action="#{album_add.saveSongs}" value="Add" />
 					</div>
 					<div class="album">
 						<table>
@@ -114,6 +114,7 @@
 										<tr>
 											<td>
 												<c:forEach var="song" items="#{album_add.results}">
+													#{song.trackNumber}.&nbsp;
 													#{song.name}<br />
 												</c:forEach>
 											</td>
