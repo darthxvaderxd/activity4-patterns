@@ -1,0 +1,16 @@
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.nilfactor.activity4.model.SpotifySong" table="spotify_song" schema="public">
+       <id name="id" type="string" column="song_id">
+			<generator class="increment"/>
+	   </id> 
+       <property name="disc" column="disc"/>
+       <property name="trackNumber" column="track_number"/>
+       <property name="duration" column="duration"/>
+       <property name="previewUrl" column="preview_url"/>
+       <property name="name" column="name"/>
+       <property name="album" column="albumId"/>
+    </class>
+</hibernate-mapping>

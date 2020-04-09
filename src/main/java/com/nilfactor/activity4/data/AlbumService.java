@@ -43,7 +43,7 @@ public class AlbumService {
 	public static SpotifyAlbum getAlbum(String id) {
 		for (int i = 0; i < albums.size(); i += 1) {
 			SpotifyAlbum album = albums.get(i);
-			if (album.getId().equals(id)) {
+			if (album.getAlbumId().equals(id)) {
 				return album;
 			}
 		}

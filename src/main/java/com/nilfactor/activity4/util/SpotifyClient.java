@@ -126,7 +126,7 @@ public class SpotifyClient {
 						artists.add((String) artist.get("name"));
 					}
 					
-					spotifyAlbum.setId(id);
+					spotifyAlbum.setAlbumId(id);
 					spotifyAlbum.setImageHeight((long) image.get("height"));
 					spotifyAlbum.setImageWidth((long) image.get("width"));
 					spotifyAlbum.setImageLink(URLDecoder.decode((String) image.get("url")));
@@ -189,7 +189,7 @@ public class SpotifyClient {
 							}
 							
 							SpotifyAlbum spotifyAlbum = new SpotifyAlbum();
-							spotifyAlbum.setId((String) a.get("id"));
+							spotifyAlbum.setAlbumId((String) a.get("id"));
 							spotifyAlbum.setImageHeight((long) image.get("height"));
 							spotifyAlbum.setImageWidth((long) image.get("width"));
 							spotifyAlbum.setImageLink(URLDecoder.decode((String) image.get("url")));

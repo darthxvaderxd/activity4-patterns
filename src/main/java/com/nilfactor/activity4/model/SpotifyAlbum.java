@@ -1,20 +1,83 @@
 package com.nilfactor.activity4.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-import com.nilfactor.activity4.data.SongService;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class SpotifyAlbum {
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.nilfactor.activity4.data.SongService;
+import com.nilfactor.activity4.util.StringListConverter;
+
+@Entity(name = "com.nilfactor.activity4.model.SpotifyAlbum")
+@XmlRootElement
+@Table(name = "spotify_album", uniqueConstraints = @UniqueConstraint(columnNames = "album_id"))
+public class SpotifyAlbum implements Serializable {
+	/**
+     * Default value included to remove warning. Remove or modify at will.
+     **/
+    private static final long serialVersionUID = 1L;
+    
+    @Id
+    @Column(name = "album_id", unique=true, nullable = false)
+    private String albumId;
+    
+    @NotNull
+	@NotEmpty
+    @Column(name="image_link")
 	private String imageLink;
+    
+    @NotNull
+	@NotEmpty
+    @Column(name="image_width")
 	private long imageWidth;
+    
+    @NotNull
+	@NotEmpty
+    @Column(name="image_height")
 	private long imageHeight;
+    
+    @NotNull
+	@NotEmpty
+    @Column(name="total_tracks")
 	private long totalTracks;
+    
+    @Convert(converter = StringListConverter.class)
+    @NotNull
+	@NotEmpty
+    @Column(name="artists")
 	private List<String> artists;
+    
+    @NotNull
+	@NotEmpty
+    @Column(name="release_date")
 	private String releaseDate;
+    
+    @NotNull
+	@NotEmpty
+    @Column(name="name")
 	private String name;
+    
+    @NotNull
+	@NotEmpty
+    @Column(name="link")
 	private String link;
-	private String id;
-	List<SpotifySong> songs;
+    
+    @OneToMany(cascade=CascadeType.ALL)
+    @JoinColumn(name="album",referencedColumnName="album_id", insertable=false, updatable=false)
+	private List<SpotifySong> songs;
 	
 	public String getImageLink() {
 		return imageLink;
@@ -80,12 +143,12 @@ public class SpotifyAlbum {
 		this.link = link;
 	}
 	
-	public String getId() {
-		return id;
+	public String getAlbumId() {
+		return albumId;
 	}
 	
-	public void setId(String id) {
-		this.id = id;
+	public void setAlbumId(String id) {
+		this.albumId = id;
 	}
 	
 	public String getAllArtistsAsString() {
@@ -98,7 +161,7 @@ public class SpotifyAlbum {
 	
 	public List<SpotifySong> getSongs() {
 		if (songs == null) {
-			songs = SongService.findSongForAlbum(id);
+			songs = SongService.findSongForAlbum(albumId);
 		}
 		
 		return songs;
