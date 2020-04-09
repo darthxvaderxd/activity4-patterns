@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -40,17 +39,14 @@ public class SpotifyAlbum implements Serializable {
 	private String imageLink;
     
     @NotNull
-	@NotEmpty
     @Column(name="image_width")
 	private long imageWidth;
     
     @NotNull
-	@NotEmpty
     @Column(name="image_height")
 	private long imageHeight;
     
     @NotNull
-	@NotEmpty
     @Column(name="total_tracks")
 	private long totalTracks;
     
@@ -111,10 +107,15 @@ public class SpotifyAlbum implements Serializable {
 		this.totalTracks = totalTracks;
 	}
 	
-	public List<String> getArtists() {
-		return artists;
+	public String getArtists() {
+		return getAllArtistsAsString();
 	}
 
+	public void setArtists(String artists) {
+		StringListConverter convert = new StringListConverter();
+		this.artists = convert.convertToEntityAttribute(artists);
+	}
+	
 	public void setArtists(List<String> artists) {
 		this.artists = artists;
 	}

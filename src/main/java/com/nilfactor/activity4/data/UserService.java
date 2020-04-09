@@ -12,7 +12,27 @@ import com.nilfactor.activity4.util.HibernateUtil;
 
 // @Stateless
 public class UserService {
-	/* R operations of CRUD */
+	/* C of CRUD */
+	public static void saveUserEntity(User user) {
+		 Transaction transaction = null;
+	     try {
+	       	Session session = HibernateUtil.getSessionFactory().openSession();
+	        			
+	        // start a transaction
+	        transaction = session.beginTransaction();
+	        session.save(user);
+	        
+	        // commit transaction
+	       transaction.commit();
+	     } catch (Exception e) {
+	    	 if (transaction != null) {
+	    		 transaction.rollback();
+	         }
+	         e.printStackTrace();
+	     }
+	 }
+	
+	/* R of CRUD */
 	public static User getById(Long id) {
 	    
 		return new User();

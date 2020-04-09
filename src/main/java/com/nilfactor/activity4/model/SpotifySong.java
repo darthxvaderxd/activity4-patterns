@@ -14,6 +14,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.nilfactor.activity4.data.AlbumService;
+
 @Entity(name = "com.nilfactor.activity4.model.SpotifySong")
 @XmlRootElement
 @Table(name = "spotify_song", uniqueConstraints = @UniqueConstraint(columnNames = "song_id"))
@@ -28,17 +30,14 @@ public class SpotifySong implements Serializable {
 	private String id;
 	
 	@NotNull
-	@NotEmpty
     @Column(name="disc")
 	private Long disc;
 	
 	@NotNull
-	@NotEmpty
     @Column(name="track_number")
 	private Long trackNumber;
 	
 	@NotNull
-	@NotEmpty
     @Column(name="duration")
 	private Long duration;
 	
@@ -115,6 +114,10 @@ public class SpotifySong implements Serializable {
 	
 	public void setAlbum(String album) {
 		this.albumId = album;
+		
+		if (spotifyAlbum == null) {
+			spotifyAlbum = AlbumService.getAlbum(album);
+		}
 	}
 
 	public SpotifyAlbum getSpotifyAlbum() {

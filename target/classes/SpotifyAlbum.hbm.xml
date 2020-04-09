@@ -3,9 +3,7 @@
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="com.nilfactor.activity4.model.SpotifyAlbum" table="spotify_album" schema="public">
-       	<id name="albumId" type="string" column="album_id">
-			<generator class="increment"/>
-	   	</id> 
+       	<id name="albumId" type="string" column="album_id"/>
        	<property name="imageLink" column="image_link"/>
 	   	<property name="imageWidth" column="image_width"/>
  	   	<property name="imageHeight" column="image_height"/>

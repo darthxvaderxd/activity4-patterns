@@ -4,15 +4,94 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nilfactor.activity4.model.SpotifyAlbum;
+import com.nilfactor.activity4.util.HibernateUtil;
 import com.nilfactor.activity4.util.SpotifyClient;
 
 import javax.ejb.*;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class AlbumService {
-	private static List<SpotifyAlbum> albums = new ArrayList<SpotifyAlbum>();
+	private static List<SpotifyAlbum> albums = getAlbums();
 	
+	/* C of CRUD */
+	public static void saveAlbum(SpotifyAlbum album) {
+		 Transaction transaction = null;
+	     try {
+	       	Session session = HibernateUtil.getSessionFactory().openSession();
+	        			
+	        // start a transaction
+	        transaction = session.beginTransaction();
+	        session.save(album);
+	        
+	        // commit transaction
+	       transaction.commit();
+	     } catch (Exception e) {
+	    	 if (transaction != null) {
+	    		 transaction.rollback();
+	         }
+	         e.printStackTrace();
+	     }
+	 }
+	
+	/* R of CRUD */
+	@SuppressWarnings("unchecked")
+	public static SpotifyAlbum getById(Long id) {
+		Transaction transaction = null;
+		 try {
+			// start a transaction
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			transaction = session.beginTransaction();
+			
+			String hql = "select a from com.nilfactor.activity4.model.SpotifyAlbum a where albumId = :id";
+			List<SpotifyAlbum> results = session.createQuery(hql)
+					.setParameter("id", id)
+					.list();
+			
+			transaction.commit();
+			
+			System.out.println("Size => " + results.size());
+			
+			if (results.size() > 0) {
+				return results.get(0);
+			}
+	     } catch (Exception e) {
+	    	 if (transaction != null) {
+	    		 transaction.rollback();
+	         }
+	         e.printStackTrace();
+	     }
+		 
+		 return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<SpotifyAlbum> getAlbums() {
+		 Transaction transaction = null;
+		 try {
+			 Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			 transaction = session.beginTransaction();
+			 Query q = session.createQuery("select a from com.nilfactor.activity4.model.SpotifyAlbum a");
+			 List<SpotifyAlbum> albums = q.list();
+			 
+			 transaction.commit();
+			 return albums;
+		 } catch (Exception e) {
+			 if (transaction != null) {
+	    		 transaction.rollback();
+	         }
+	         e.printStackTrace();
+	     }
+		 
+		 return new ArrayList<SpotifyAlbum>();
+	}
+	
+	
+	/* Utility functions to handle bl */
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public static int getAlbumCount() {
 		return albums.size();
@@ -22,6 +101,7 @@ public class AlbumService {
 	public static void addAlbum(String id) {
 		try {
 			SpotifyAlbum album = SpotifyClient.lookupAlbum(id);
+			saveAlbum(album);
 			albums.add(album);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -31,6 +111,7 @@ public class AlbumService {
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public static void addAlbum(SpotifyAlbum album) {
+		saveAlbum(album);
 		albums.add(album);
 	}
 	
