@@ -88,7 +88,7 @@ public class UserService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<User> getUsers(long limit, long start) {
+	public static List<User> getUsers() {
 		 Transaction transaction = null;
 		 try {
 			 Session session = HibernateUtil.getSessionFactory().getCurrentSession();

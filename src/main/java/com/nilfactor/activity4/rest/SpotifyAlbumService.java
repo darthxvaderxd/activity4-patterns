@@ -6,11 +6,13 @@ import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.nilfactor.activity4.data.AlbumService;
 import com.nilfactor.activity4.data.SongService;
@@ -21,25 +23,47 @@ import com.nilfactor.activity4.model.SpotifySong;
 @Path("/albums")
 @Produces("application/json")
 @Consumes("application/json")
-public class SpotifyAlbumService {
+public class SpotifyAlbumService extends RestControllerBase {
 	@GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-	public List<SpotifyAlbum> getSongs() {
-		return AlbumService.getAllAlbums();
+	public Response getSongs(@HeaderParam("authorization") String authString) {
+		if (this.isUserAuthenticated(authString) == false) {
+			return Response.status(Response.Status.UNAUTHORIZED)
+		        .entity("{\"error\":\"User not authenticated\"}")
+		        .build();
+		}
+		
+		return Response.status(Response.Status.OK)
+		        .entity(AlbumService.getAllAlbums())
+		        .build();
 	}
 	
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public SpotifyAlbum getSong(@PathParam("id") String id) {
-		return AlbumService.getById(id);
+	public Response getSong(@HeaderParam("authorization") String authString, @PathParam("id") String id) {
+		if (this.isUserAuthenticated(authString) == false) {
+			return Response.status(Response.Status.UNAUTHORIZED)
+		        .entity("{\"error\":\"User not authenticated\"}")
+		        .build();
+		}
+		
+		return Response.status(Response.Status.OK)
+		        .entity(AlbumService.getById(id))
+		        .build();
 	}
 	
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public SpotifyAlbum addedAlbum(SpotifyAlbum album) {
+	public Response addedAlbum(@HeaderParam("authorization") String authString, SpotifyAlbum album) {
+		if (this.isUserAuthenticated(authString) == false) {
+			return Response.status(Response.Status.UNAUTHORIZED)
+		        .entity("{\"error\":\"User not authenticated\"}")
+		        .build();
+		}
+		
 		AlbumService.addAlbum(album);
 		
 		// Add the album if it exists
@@ -50,26 +74,38 @@ public class SpotifyAlbumService {
 			}
 		}
 		
-		return AlbumService.getById(album.getAlbumId());
+		return Response.status(Response.Status.OK)
+		        .entity(AlbumService.getById(album.getAlbumId()))
+		        .build();
 	}
 	
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String removeAlbum(@PathParam("id") String id) {
+	public Response removeAlbum(@HeaderParam("authorization") String authString, @PathParam("id") String id) {
+		if (this.isUserAuthenticated(authString) == false) {
+			return Response.status(Response.Status.UNAUTHORIZED)
+		        .entity("{\"error\":\"User not authenticated\"}")
+		        .build();
+		}
+		
 		SpotifyAlbum album = AlbumService.getById(id);
 		if (album != null) {
 			List<SpotifySong> songs = SongService.getSongsByAlbumId(id);
-			if (songs.size() > 0) {
+			if (songs != null && songs.size() > 0) {
 				for(int i = 0; i < songs.size(); i += 1) {
 					SongService.removeSong(songs.get(i));
 				}
 			}
-			
+			AlbumService.removeAlbum(album);
 		} else {
-			return "{ \"message\": \"album " + id + " does not exist\"}";
+			return Response.status(Response.Status.NOT_FOUND)
+			        .entity("{ \"message\": \"album " + id + " does not exist\"}")
+			        .build();
 		}
 		
-		return "{ \"message\": \"album removed\"}";
+		return Response.status(Response.Status.OK)
+		        .entity("{ \"message\": \"album removed\"}")
+		        .build();
 	}
 }

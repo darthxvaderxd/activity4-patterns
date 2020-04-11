@@ -134,6 +134,7 @@ public class SpotifySong implements Serializable {
 	@XmlElement
 	public void setSpotifyAlbum(SpotifyAlbum spotifyAlbum) {
 		this.spotifyAlbum = spotifyAlbum;
+		this.albumId = spotifyAlbum.getAlbumId();
 	}
 	
 }

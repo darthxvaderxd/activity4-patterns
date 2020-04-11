@@ -1,9 +1,9 @@
 package com.nilfactor.activity4.rest;
 
-import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.nilfactor.activity4.model.SpotifyAlbum;
 import com.nilfactor.activity4.model.SpotifySong;
@@ -12,28 +12,50 @@ import com.nilfactor.activity4.data.SongService;
 
 @RequestScoped
 @Path("/songs")
-@Produces("application/json")
-@Consumes("application/json")
-public class SpotifySongService {
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class SpotifySongService extends RestControllerBase {
 	
 	@GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-	public List<SpotifySong> getSongs() {
-		return SongService.getAllSongs();
+	public Response getSongs(@HeaderParam("authorization") String authString) {
+		if (this.isUserAuthenticated(authString) == false) {
+			return Response.status(Response.Status.UNAUTHORIZED)
+		        .entity("{\"error\":\"User not authenticated\"}")
+		        .build();
+		}
+		
+		return Response.status(Response.Status.OK)
+		        .entity(SongService.getAllSongs())
+		        .build();
 	}
 	
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public SpotifySong getSong(@PathParam("id") String id) {
-		return SongService.getSong(id);
+	public Response getSong(@HeaderParam("authorization") String authString, @PathParam("id") String id) {
+		if (this.isUserAuthenticated(authString) == false) {
+			return Response.status(Response.Status.UNAUTHORIZED)
+		        .entity("{\"error\":\"User not authenticated\"}")
+		        .build();
+		}
+		
+		return Response.status(Response.Status.OK)
+		        .entity(SongService.getSong(id))
+		        .build();
 	}
 	
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public SpotifySong addedSong(SpotifySong song) {
+	public Response addedSong(@HeaderParam("authorization") String authString, SpotifySong song) {
+		if (this.isUserAuthenticated(authString) == false) {
+			return Response.status(Response.Status.UNAUTHORIZED)
+		        .entity("{\"error\":\"User not authenticated\"}")
+		        .build();
+		}
+		
 		SongService.addSong(song);
 		
 		// Add the album if it exists
@@ -42,20 +64,32 @@ public class SpotifySongService {
 			AlbumService.addAlbum(album);
 		}
 		
-		return SongService.getSong(song.getId());
+		return Response.status(Response.Status.OK)
+		        .entity(SongService.getSong(song.getId()))
+		        .build();
 	}
 	
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String removeSong(@PathParam("id") String id) {
+	public Response removeSong(@HeaderParam("authorization") String authString, @PathParam("id") String id) {
+		if (this.isUserAuthenticated(authString) == false) {
+			return Response.status(Response.Status.UNAUTHORIZED)
+		        .entity("{\"error\":\"User not authenticated\"}")
+		        .build();
+		}
+		
 		SpotifySong song = SongService.getById(id);
 		if (song != null) {
 			SongService.removeSong(song);
 		} else {
-			return "{ \"message\": \"song " + id + " does not exist\"}";
+			return Response.status(Response.Status.OK)
+			        .entity("{ \"message\": \"song " + id + " does not exist\"}")
+			        .build();
 		}
 		
-		return "{ \"message\": \"song removed\"}";
+		return Response.status(Response.Status.OK)
+		        .entity("{ \"message\": \"song removed\"}")
+		        .build();
 	}
 }

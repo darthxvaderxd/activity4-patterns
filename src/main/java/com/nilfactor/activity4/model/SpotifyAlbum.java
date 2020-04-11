@@ -15,9 +15,11 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nilfactor.activity4.data.SongService;
 import com.nilfactor.activity4.util.StringListConverter;
 
@@ -166,11 +168,12 @@ public class SpotifyAlbum implements Serializable {
 		return String.join(", ", artists);
 	}
 	
-	@XmlElement
+	@JsonIgnore
 	public void setSongs(List<SpotifySong> songs) {
 		this.songs = songs;
 	}
 	
+	@JsonIgnore
 	public List<SpotifySong> getSongs() {
 		if (songs == null) {
 			songs = SongService.findSongForAlbum(albumId);
