@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -79,6 +80,7 @@ public class SpotifyAlbum implements Serializable {
 		return imageLink;
 	}
 	
+	@XmlElement
 	public void setImageLink(String imageLink) {
 		this.imageLink = imageLink;
 	}
@@ -87,6 +89,7 @@ public class SpotifyAlbum implements Serializable {
 		return imageWidth;
 	}
 	
+	@XmlElement
 	public void setImageWidth(long imageWidth) {
 		this.imageWidth = imageWidth;
 	}
@@ -95,6 +98,7 @@ public class SpotifyAlbum implements Serializable {
 		return imageHeight;
 	}
 	
+	@XmlElement
 	public void setImageHeight(long imageHeight) {
 		this.imageHeight = imageHeight;
 	}
@@ -103,6 +107,7 @@ public class SpotifyAlbum implements Serializable {
 		return totalTracks;
 	}
 	
+	@XmlElement
 	public void setTotalTracks(long totalTracks) {
 		this.totalTracks = totalTracks;
 	}
@@ -111,6 +116,7 @@ public class SpotifyAlbum implements Serializable {
 		return getAllArtistsAsString();
 	}
 
+	@XmlElement
 	public void setArtists(String artists) {
 		StringListConverter convert = new StringListConverter();
 		this.artists = convert.convertToEntityAttribute(artists);
@@ -124,6 +130,7 @@ public class SpotifyAlbum implements Serializable {
 		return releaseDate;
 	}
 	
+	@XmlElement
 	public void setReleaseDate(String releaseDate) {
 		this.releaseDate = releaseDate;
 	}
@@ -132,6 +139,7 @@ public class SpotifyAlbum implements Serializable {
 		return name;
 	}
 	
+	@XmlElement
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -140,6 +148,7 @@ public class SpotifyAlbum implements Serializable {
 		return link;
 	}
 	
+	@XmlElement
 	public void setLink(String link) {
 		this.link = link;
 	}
@@ -148,6 +157,7 @@ public class SpotifyAlbum implements Serializable {
 		return albumId;
 	}
 	
+	@XmlElement
 	public void setAlbumId(String id) {
 		this.albumId = id;
 	}
@@ -156,6 +166,7 @@ public class SpotifyAlbum implements Serializable {
 		return String.join(", ", artists);
 	}
 	
+	@XmlElement
 	public void setSongs(List<SpotifySong> songs) {
 		this.songs = songs;
 	}

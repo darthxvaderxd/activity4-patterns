@@ -29,7 +29,7 @@ public class LoginFilter implements Filter {
 				res.sendRedirect(req.getContextPath() + "/faces/user.xhtml");
 			} else if (reqURI.indexOf("/login.xhtml") >= 0
 					|| (ses != null && ses.getAttribute("username") != null)
-					|| reqURI.indexOf("/static/") >= 0 // to come public pages
+					|| reqURI.indexOf("/register.xhtml") >= 0 // to come public pages
 					|| reqURI.contains("javax.faces.resource")) { // we either do not need to login or are logged in
 				c.doFilter(request, response);
 			} else { // user needs to login to access this page

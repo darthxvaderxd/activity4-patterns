@@ -10,6 +10,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -72,6 +73,7 @@ public class SpotifySong implements Serializable {
 		return disc;
 	}
 	
+	@XmlElement
 	public void setDisc(Long disc) {
 		this.disc = disc;
 	}
@@ -80,6 +82,7 @@ public class SpotifySong implements Serializable {
 		return trackNumber;
 	}
 	
+	@XmlElement
 	public void setTrackNumber(Long trackNumber) {
 		this.trackNumber = trackNumber;
 	}
@@ -88,6 +91,7 @@ public class SpotifySong implements Serializable {
 		return duration;
 	}
 	
+	@XmlElement
 	public void setDuration(Long duration) {
 		this.duration = duration;
 	}
@@ -96,6 +100,7 @@ public class SpotifySong implements Serializable {
 		return previewUrl;
 	}
 	
+	@XmlElement
 	public void setPreviewUrl(String previewUrl) {
 		this.previewUrl = previewUrl;
 	}
@@ -104,15 +109,17 @@ public class SpotifySong implements Serializable {
 		return name;
 	}
 	
+	@XmlElement
 	public void setName(String name) {
 		this.name = name;
 	}
 	
-	public String getAlbum() {
+	public String getAlbumId() {
 		return albumId;
 	}
 	
-	public void setAlbum(String album) {
+	@XmlElement
+	public void setAlbumId(String album) {
 		this.albumId = album;
 		
 		if (spotifyAlbum == null) {
@@ -124,6 +131,7 @@ public class SpotifySong implements Serializable {
 		return spotifyAlbum;
 	}
 
+	@XmlElement
 	public void setSpotifyAlbum(SpotifyAlbum spotifyAlbum) {
 		this.spotifyAlbum = spotifyAlbum;
 	}

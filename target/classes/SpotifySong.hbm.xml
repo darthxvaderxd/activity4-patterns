@@ -9,6 +9,6 @@
        <property name="duration" column="duration"/>
        <property name="previewUrl" column="preview_url"/>
        <property name="name" column="name"/>
-       <property name="album" column="albumId"/>
+       <property name="albumId" column="albumId"/>
     </class>
 </hibernate-mapping>

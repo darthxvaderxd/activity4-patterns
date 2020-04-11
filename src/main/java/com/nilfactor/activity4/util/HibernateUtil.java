@@ -5,14 +5,6 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
-/**
-* HibernateUtil 
-*
-* @author  Richard Williamson
-* @version 1.0
-* @since   2020-04-02
-*/
-
 public class HibernateUtil {
 	private static final SessionFactory sessionFactory = buildSessionFactory();
 

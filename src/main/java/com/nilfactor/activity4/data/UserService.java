@@ -13,7 +13,31 @@ import com.nilfactor.activity4.util.HibernateUtil;
 // @Stateless
 public class UserService {
 	/* C of CRUD */
-	public static void saveUserEntity(User user) {
+	public static int registerUser(String username, String password, String firstName, String lastName, String email) {
+		User userExists = getByUsername(username);
+		
+		if (userExists == null) {
+			User user = new User();
+			user.setUsername(username);
+			user.setPassword(password);
+			user.setFirstName(firstName);
+			user.setLastName(lastName);
+			user.setEmail(email);
+			saveUser(user);
+			
+			User doesUserExistNow = getByUsername(username);
+			
+			if (doesUserExistNow == null) {
+				return -1;
+			}
+			
+			return 1;
+		}
+		
+		return 0;
+	}
+	
+	public static void saveUser(User user) {
 		 Transaction transaction = null;
 	     try {
 	       	Session session = HibernateUtil.getSessionFactory().openSession();
@@ -33,11 +57,6 @@ public class UserService {
 	 }
 	
 	/* R of CRUD */
-	public static User getById(Long id) {
-	    
-		return new User();
-	}
-	
 	@SuppressWarnings("unchecked")
 	public static User getByUsername(String username) {
 		Transaction transaction = null;
@@ -64,7 +83,8 @@ public class UserService {
 	         }
 	         e.printStackTrace();
 	     }
-		 return new User();
+		 
+		 return null;
 	}
 	
 	@SuppressWarnings("unchecked")

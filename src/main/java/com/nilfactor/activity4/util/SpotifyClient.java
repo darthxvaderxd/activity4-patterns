@@ -66,7 +66,7 @@ public class SpotifyClient {
 							SpotifySong spotifySong = new SpotifySong();
 							spotifySong.setId((String) song.get("id"));
 							spotifySong.setName((String) song.get("name"));
-							spotifySong.setAlbum(id);
+							spotifySong.setAlbumId(id);
 							spotifySong.setDisc((long) song.get("disc_number"));
 							spotifySong.setTrackNumber((Long) song.get("track_number"));
 							spotifySong.setDuration(seconds);

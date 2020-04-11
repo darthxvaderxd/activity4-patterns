@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+	<h:head>
+		<title>Welcome</title>
+		<style>
+				h1 { width: 100%; background-color: #777; border: 1px solid #222; color: white }
+				div { padding: 5px; }
+				input { border-radius: 5px; }
+				.warning { color: red; }
+				.right { text-align: right; }
+				.container { border: 1px solid #222; border-radius: 5px; max-width: 500px; }
+		</style>
+		<script>
+			// if you run this in the eclipse web browser you need this :/
+			if (!String.prototype.includes) {
+				String.prototype.includes = function(search, start) {
+				    if (typeof start !== 'number') {
+				    	start = 0;
+				    }
+	
+				    if (start + search.length > this.length) {
+				    	return false;
+				    } else {
+				    	return this.indexOf(search, start) !== -1;
+				    }
+			  	};
+			}
+			// need to do this because spotify sends # over ?
+			window.onload = function() {
+				if (window.location.href.includes('#access_token')) {
+					window.location.href = window.location.href.replace('#access_token', '?access_token');
+				}
+			}
+		</script>
+	</h:head>
+	<h:body>
+	<h:form>
+		<h1>
+			#{login.message}
+		</h1>
+		<div class="container">
+			<c:if test="#{empty spotify.clientSecret}">
+				<div class="warning">
+					In order to use this application music lookup capabilities
+					you need to authorize with a Spotify account.
+					<a href="#{spotify.spotifyUri}">Click Here</a> to authorize
+					this application to use your Spotify account.
+				</div>
+			</c:if>
+			<c:if test="#{not empty spotify.clientSecret}">
+				<div style="margin-bottom: 8px;">
+					<a href="user.xhtml">Home</a>
+					<a href="album_lookup.xhtml">Add Album</a>
+					<a href="browse_albums.xhtml">View Your Albums</a>
+					<a href="browse_songs.xhtml">View Your Songs</a>
+					<a href="search_albums.xhtml">Search Your Albums</a>
+				</div>
+			</c:if>
+			<c:if test="#{not empty spotify.clientSecret}">
+				<div class="ok">
+					You have authorized with your spotify account.
+					<a href="user.xhtml">Go Back</a>
+				</div>
+			</c:if>
+		</div>
+	</h:form>
+</h:body>
+</html>

@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core">
+	<h:head>
+		<title>Welcome</title>
+		<style>
+			body {
+				padding: 0;
+				margin: 0;
+				font-family: Arial, sanserif;
+			}
+			h1 {
+				width: 100%;
+				background-color: #777;
+				border: 1px solid #222;
+				color: white
+			}
+			div { padding: 5px; }
+			input { border-radius: 5px; }
+			input[type="text"] { width: 70%; }
+			table {
+				width: 100%;
+				padding: 0;
+				border-collapse: collapse;
+			}
+			img { border: 1px solid #aaa; }
+			td { text-align: center; }
+			.warning { color: red; }
+			.right { text-align: right; }
+			.container {
+				border: 1px solid #222;
+				border-radius: 5px;
+				max-width: 500px;
+			}
+			.album {
+				min-height: 600px;
+				max-height: 600px;
+				border: 1px solid #222;
+				background-color: #777;
+				color: white;
+				margin: 8px;
+				padding: 0;
+			}
+			.thead {
+				background-color: #444;
+				color: white;
+				text-align: center;
+				min-height: 32px;
+				margin-bottom: 4px;
+				white-space: nowrap;
+				font-weight: bold;
+				overflow: hidden;
+				max-height: 32px;
+				border-bottom: 1px solid #fff;
+				width: 100%;
+			}
+			.search {
+				margin-right: auto;
+				margin-left: auto;
+				width: 80%;
+				text-align: center;
+				border: 1px solid #222;
+				border-radius: 4px;
+				padding: 8px;
+				background-color: #ccc;
+			}
+			.album-head {
+				margin-right: auto;
+				margin-left: auto;
+				background-color: #444;
+				color: white;
+				text-align: center;
+				min-height: 18px;
+				white-space: nowrap;
+				font-weight: bold;
+				overflow: hidden;
+				max-height: 18px;
+				padding: 8px;
+				width: 80%;
+				border-right: 1px solid #222;
+				border-left: 1px solid #222;
+				border-top: 1px solid #222;
+				border-top-right-radius: 8px;
+				border-top-left-radius: 8px;
+			}
+			.album-container {
+				margin-right: auto;
+				margin-left: auto;
+				border: 1px solid #222;
+				background-color: #ccc;
+				display: flex;
+				width: 80%;
+				position: relative;
+    			text-align: center;
+				padding: 8px;
+				overflow-x: scroll;
+			}
+			.album-foot {
+				margin-right: auto;
+				margin-left: auto;
+				background-color: #444;
+				color: white;
+				text-align: center;
+				min-height: 18px;
+				white-space: nowrap;
+				font-weight: bold;
+				overflow: hidden;
+				max-height: 18px;
+				padding: 8px;
+				width: 80%;
+				border-right: 1px solid #222;
+				border-left: 1px solid #222;
+				border-top: 1px solid #222;
+				border-bottom-right-radius: 8px;
+				border-bottom-left-radius: 8px;
+			}
+			.songs {
+				max-height: 200px;
+				overflow-y: scroll;
+				background-color: #222;
+				color: white;
+			}
+		</style>
+	</h:head>
+	<h:body>
+		<h:form>
+			<h1>
+				#{login.message}
+			</h1>
+			<c:if test="#{empty spotify.clientSecret}">
+				<div>
+					<a href="spotify.xhtml">Authorize Spotify Account</a>
+				</div>
+			</c:if>
+			<c:if test="#{not empty spotify.clientSecret}">
+				<div style="margin-bottom: 8px;">
+					<a href="user.xhtml">Home</a>
+					<a href="album_lookup.xhtml">Add Album</a>
+					<a href="browse_albums.xhtml">View Your Albums</a>
+					<a href="browse_songs.xhtml">View Your Songs</a>
+					<a href="search_albums.xhtml">Search Your Albums</a>
+				</div>
+			</c:if>
+			<c:if test="#{not empty spotify.clientSecret}">
+				<div class="search">
+					<h:outputText for="search" value="Artist/Album Name: " />
+					<h:inputText id="search" value="#{search_albums.search}" />
+					&nbsp;
+					<h:commandButton action="#{search_albums.searchAlbums}" value="Search" />
+				</div>
+				<c:if test="#{empty search_albums.albums}">
+					There are no albums found based on your search.
+				</c:if>
+				<c:if test="#{not empty search_albums.albums}">
+					<br />
+					<div class="album-head">Album Results [#{search_albums.albums.size()}]</div>
+					<div class="album-container">						
+						<c:forEach var="album" items="#{search_albums.albums}">
+							<div class="album">
+								<table>
+									<tr>
+										<td class="thead">
+											#{album.name}
+										</td>
+									</tr>
+									<tr>
+										<td colspan="2" align="center" style="padding: 8px;">
+											<a href="#{album.imageLink}" target="_blank">
+												<img src="#{album.imageLink}" height="256" width="256" />
+											</a>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<span style="font-weight: bold;">Artist(s): </span>
+											#{album.getAllArtistsAsString()}
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<span style="font-weight: bold;">Tracks: </span>
+											#{album.totalTracks}
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<span style="font-weight: bold;">Release Date</span>
+											#{album.releaseDate}
+										</td>
+									</tr>
+									<tr>
+										<td><hr /></td>
+									</tr>
+									<c:if test="#{not empty album.songs}">
+										<tr>
+											<td>
+												<div class="songs">
+													Songs<br />
+													<c:forEach var="song" items="#{album.songs}">
+														#{song.trackNumber}.&nbsp;
+														#{song.name}<br />
+													</c:forEach>
+												</div>
+											</td>
+										</tr>
+									</c:if>
+								</table>
+							</div>
+						</c:forEach>
+						<div style="float: left;">
+							&nbsp;
+						</div>
+					</div>
+					<div class="album-foot">&nbsp;</div>
+				</c:if>
+			</c:if>
+		</h:form>
+	</h:body>
+</html>

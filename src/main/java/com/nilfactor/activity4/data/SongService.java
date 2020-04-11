@@ -41,14 +41,14 @@ public class SongService {
 	
 	/* R of CRUD */
 	@SuppressWarnings("unchecked")
-	public static SpotifySong getById(Long id) {
+	public static SpotifySong getById(String id) {
 		Transaction transaction = null;
 		 try {
 			// start a transaction
 			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 			transaction = session.beginTransaction();
 			
-			String hql = "select a from com.nilfactor.activity4.model.SpotifySong a where albumId = :id";
+			String hql = "select s from com.nilfactor.activity4.model.SpotifySong s where id = :id";
 			List<SpotifySong> results = session.createQuery(hql)
 					.setParameter("id", id)
 					.list();
@@ -71,12 +71,60 @@ public class SongService {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static List<SpotifySong> getSongsByAlbumId(String albumId) {
+		Transaction transaction = null;
+		 try {
+			// start a transaction
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			transaction = session.beginTransaction();
+			
+			String hql = "select s from com.nilfactor.activity4.model.SpotifySong s where albumId = :albumId";
+			List<SpotifySong> results = session.createQuery(hql)
+					.setParameter("albumId", albumId)
+					.list();
+			
+			transaction.commit();
+			
+			System.out.println("Size => " + results.size());
+			
+			if (results.size() > 0) {
+				return results;
+			}
+	     } catch (Exception e) {
+	    	 if (transaction != null) {
+	    		 transaction.rollback();
+	         }
+	         e.printStackTrace();
+	     }
+		 
+		 return null;
+	}
+	
+	/* D of CRUD */
+	public static void deleteSong(SpotifySong song) {
+		Transaction transaction = null;
+		 try {
+			// start a transaction
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			transaction = session.beginTransaction();
+			session.delete(song);
+			transaction.commit();
+			
+	     } catch (Exception e) {
+	    	 if (transaction != null) {
+	    		 transaction.rollback();
+	         }
+	         e.printStackTrace();
+	     }
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static List<SpotifySong> getSongs() {
 		 Transaction transaction = null;
 		 try {
 			 Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 			 transaction = session.beginTransaction();
-			 Query q = session.createQuery("select a from com.nilfactor.activity4.model.SpotifySong a");
+			 Query q = session.createQuery("select s from com.nilfactor.activity4.model.SpotifySong s");
 			 List<SpotifySong> songs = q.list();
 			 
 			 transaction.commit();
@@ -91,7 +139,6 @@ public class SongService {
 		 return new ArrayList<SpotifySong>();
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public static int getSongCount() {
 		return songs.size();
 	}
@@ -101,7 +148,7 @@ public class SongService {
 		SpotifyAlbum album = song.getSpotifyAlbum();
 		
 		if (album == null) {
-			song.setSpotifyAlbum(AlbumService.getAlbum(song.getAlbum()));
+			song.setSpotifyAlbum(AlbumService.getAlbum(song.getAlbumId()));
 		}
 		saveSong(song);
 		songs.add(song);
@@ -110,6 +157,7 @@ public class SongService {
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public static void removeSong(SpotifySong song) {
 		songs.remove(song);
+		deleteSong(song);
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)

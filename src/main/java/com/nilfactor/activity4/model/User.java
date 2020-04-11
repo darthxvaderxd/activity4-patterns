@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.Email;
@@ -55,11 +56,6 @@ public class User implements Serializable {
     @Column(name="email")
 	private String email;
 	
-	@NotNull
-    @NotEmpty
-    @Column(name="active")
-	private Boolean active = false; 
-	
 	public User() {
 		
 	}
@@ -71,7 +67,6 @@ public class User implements Serializable {
 		this.email = email;
 		this.username = username;
 		this.password = password;
-		this.active = active;
 	}
 	
 	public Long getUserId() {
@@ -86,6 +81,7 @@ public class User implements Serializable {
 		return firstName;
 	}
 	
+	@XmlElement 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
@@ -94,6 +90,7 @@ public class User implements Serializable {
 		return lastName;
 	}
 	
+	@XmlElement
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
@@ -102,6 +99,7 @@ public class User implements Serializable {
 		return email;
 	}
 	
+	@XmlElement 
 	public void setEmail(String email) {
 		this.email = email;
 	}
@@ -110,6 +108,7 @@ public class User implements Serializable {
 		return username;
 	}
 	
+	@XmlElement 
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -118,17 +117,8 @@ public class User implements Serializable {
 		return password;
 	}
 	
+	@XmlElement 
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	public Boolean getActive() {
-		return active;
-	}
-
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-	
-	
 }

@@ -9,9 +9,13 @@ import com.nilfactor.activity4.util.SpotifyClient;
 
 import javax.ejb.*;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
@@ -40,7 +44,7 @@ public class AlbumService {
 	
 	/* R of CRUD */
 	@SuppressWarnings("unchecked")
-	public static SpotifyAlbum getById(Long id) {
+	public static SpotifyAlbum getById(String id) {
 		Transaction transaction = null;
 		 try {
 			// start a transaction
@@ -58,6 +62,56 @@ public class AlbumService {
 			
 			if (results.size() > 0) {
 				return results.get(0);
+			}
+	     } catch (Exception e) {
+	    	 if (transaction != null) {
+	    		 transaction.rollback();
+	         }
+	         e.printStackTrace();
+	     }
+		 
+		 return null;
+	}
+	
+	/* D of CRUD */
+	public static void deleteAlbum(SpotifyAlbum album) {
+		Transaction transaction = null;
+		 try {
+			// start a transaction
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			transaction = session.beginTransaction();
+			session.delete(album);
+			transaction.commit();
+			
+	     } catch (Exception e) {
+	    	 if (transaction != null) {
+	    		 transaction.rollback();
+	         }
+	         e.printStackTrace();
+	     }
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<SpotifyAlbum> searchWildCardAlbum(String search) {
+		Transaction transaction = null;
+		 try {
+			// start a transaction
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			transaction = session.beginTransaction();
+			
+			Criteria criteria = session.createCriteria(SpotifyAlbum.class);
+			Criterion artist = Restrictions.ilike("artists", search, MatchMode.ANYWHERE);
+			Criterion name = Restrictions.ilike("name", search, MatchMode.ANYWHERE);
+			
+			List<SpotifyAlbum> results = criteria.add(Restrictions.or(artist, name))
+					.list();
+			
+			transaction.commit();
+			
+			System.out.println("Size => " + results.size());
+			
+			if (results.size() > 0) {
+				return results;
 			}
 	     } catch (Exception e) {
 	    	 if (transaction != null) {
@@ -117,6 +171,7 @@ public class AlbumService {
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public static void removeAlbum(SpotifyAlbum album) {
+		deleteAlbum(album);
 		albums.remove(album);
 	}
 	

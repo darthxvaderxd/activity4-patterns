@@ -23,7 +23,6 @@ public class BrowseAlbumsController {
 	
 	public String refresh() {
 		albums = AlbumService.getAllAlbums();
-		
 		return "browse";
 	}
 }
