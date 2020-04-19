@@ -1,6 +1,7 @@
 package com.nilfactor.activity4.rest;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -15,6 +16,8 @@ import com.nilfactor.activity4.data.SongService;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SpotifySongService extends RestControllerBase {
+	@Inject private AlbumService albumService;
+	@Inject private SongService songService;
 	
 	@GET
     @Path("/")
@@ -27,7 +30,7 @@ public class SpotifySongService extends RestControllerBase {
 		}
 		
 		return Response.status(Response.Status.OK)
-		        .entity(SongService.getAllSongs())
+		        .entity(songService.getAllSongs())
 		        .build();
 	}
 	
@@ -42,7 +45,7 @@ public class SpotifySongService extends RestControllerBase {
 		}
 		
 		return Response.status(Response.Status.OK)
-		        .entity(SongService.getSong(id))
+		        .entity(songService.getSong(id))
 		        .build();
 	}
 	
@@ -56,16 +59,16 @@ public class SpotifySongService extends RestControllerBase {
 		        .build();
 		}
 		
-		SongService.addSong(song);
+		songService.addSong(song);
 		
 		// Add the album if it exists
 		SpotifyAlbum album = song.getSpotifyAlbum();
 		if (album != null) {
-			AlbumService.addAlbum(album);
+			albumService.addAlbum(album);
 		}
 		
 		return Response.status(Response.Status.OK)
-		        .entity(SongService.getSong(song.getId()))
+		        .entity(songService.getSong(song.getId()))
 		        .build();
 	}
 	
@@ -79,9 +82,9 @@ public class SpotifySongService extends RestControllerBase {
 		        .build();
 		}
 		
-		SpotifySong song = SongService.getById(id);
+		SpotifySong song = songService.getById(id);
 		if (song != null) {
-			SongService.removeSong(song);
+			songService.removeSong(song);
 		} else {
 			return Response.status(Response.Status.OK)
 			        .entity("{ \"message\": \"song " + id + " does not exist\"}")

@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nilfactor.activity4.model.SpotifyAlbum;
+import com.nilfactor.activity4.model.SpotifySong;
 import com.nilfactor.activity4.util.HibernateUtil;
 import com.nilfactor.activity4.util.SpotifyClient;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.*;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -17,16 +22,30 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
+@Dependent
+@Named
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class AlbumService {
-	private static List<SpotifyAlbum> albums = getAlbums();
+	private List<SpotifyAlbum> albums;
+	@Inject private HibernateUtil hibernateUtil;
+	@Inject private SpotifyClient spotifyClient;
+	
+	
+	public AlbumService() {
+		
+	}
+	
+	@PostConstruct
+	void init() {
+		albums = getAlbums();
+	}
 	
 	/* C of CRUD */
-	public static void saveAlbum(SpotifyAlbum album) {
+	public void saveAlbum(SpotifyAlbum album) {
 		 Transaction transaction = null;
 	     try {
-	       	Session session = HibernateUtil.getSessionFactory().openSession();
+	       	Session session = hibernateUtil.getSessionFactory().openSession();
 	        			
 	        // start a transaction
 	        transaction = session.beginTransaction();
@@ -44,11 +63,11 @@ public class AlbumService {
 	
 	/* R of CRUD */
 	@SuppressWarnings("unchecked")
-	public static SpotifyAlbum getById(String id) {
+	public SpotifyAlbum getById(String id) {
 		Transaction transaction = null;
 		 try {
 			// start a transaction
-			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			Session session = hibernateUtil.getSessionFactory().getCurrentSession();
 			transaction = session.beginTransaction();
 			
 			String hql = "select a from com.nilfactor.activity4.model.SpotifyAlbum a where albumId = :id";
@@ -74,11 +93,11 @@ public class AlbumService {
 	}
 	
 	/* D of CRUD */
-	public static void deleteAlbum(SpotifyAlbum album) {
+	public void deleteAlbum(SpotifyAlbum album) {
 		Transaction transaction = null;
 		 try {
 			// start a transaction
-			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			Session session = hibernateUtil.getSessionFactory().getCurrentSession();
 			transaction = session.beginTransaction();
 			session.delete(album);
 			transaction.commit();
@@ -92,11 +111,11 @@ public class AlbumService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<SpotifyAlbum> searchWildCardAlbum(String search) {
+	public List<SpotifyAlbum> searchWildCardAlbum(String search) {
 		Transaction transaction = null;
 		 try {
 			// start a transaction
-			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			Session session = hibernateUtil.getSessionFactory().getCurrentSession();
 			transaction = session.beginTransaction();
 			
 			Criteria criteria = session.createCriteria(SpotifyAlbum.class);
@@ -124,13 +143,25 @@ public class AlbumService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<SpotifyAlbum> getAlbums() {
+	public List<SpotifyAlbum> getAlbums() {
 		 Transaction transaction = null;
 		 try {
-			 Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			 Session session = hibernateUtil.getSessionFactory().getCurrentSession();
 			 transaction = session.beginTransaction();
 			 Query q = session.createQuery("select a from com.nilfactor.activity4.model.SpotifyAlbum a");
 			 List<SpotifyAlbum> albums = q.list();
+			 
+			 if (albums != null && albums.size() > 0) {
+				 for (int i = 0; i < albums.size(); i += 1) {
+					 SpotifyAlbum album = albums.get(i);
+					 List<SpotifySong> sl = session.createQuery("select a from com.nilfactor.activity4.model.SpotifySong a where albumId = :albumId")
+							 .setParameter("albumId", album.getAlbumId())
+							 .list();
+					 
+					 if (sl != null && sl.size() > 0)
+						 album.setSongs(sl);
+				 }
+			 }
 			 
 			 transaction.commit();
 			 return albums;
@@ -147,14 +178,14 @@ public class AlbumService {
 	
 	/* Utility functions to handle bl */
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public static int getAlbumCount() {
+	public int getAlbumCount() {
 		return albums.size();
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public static void addAlbum(String id) {
+	public void addAlbum(String id) {
 		try {
-			SpotifyAlbum album = SpotifyClient.lookupAlbum(id);
+			SpotifyAlbum album = spotifyClient.lookupAlbum(id);
 			saveAlbum(album);
 			albums.add(album);
 		} catch (Exception e) {
@@ -164,19 +195,19 @@ public class AlbumService {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public static void addAlbum(SpotifyAlbum album) {
+	public void addAlbum(SpotifyAlbum album) {
 		saveAlbum(album);
 		albums.add(album);
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public static void removeAlbum(SpotifyAlbum album) {
+	public void removeAlbum(SpotifyAlbum album) {
 		deleteAlbum(album);
 		albums.remove(album);
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public static SpotifyAlbum getAlbum(String id) {
+	public SpotifyAlbum getAlbum(String id) {
 		for (int i = 0; i < albums.size(); i += 1) {
 			SpotifyAlbum album = albums.get(i);
 			if (album.getAlbumId().equals(id)) {
@@ -188,14 +219,14 @@ public class AlbumService {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public static List<SpotifyAlbum> getAllAlbums() {
+	public List<SpotifyAlbum> getAllAlbums() {
 		return albums;
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public static List<SpotifyAlbum> findAlbumsInService(String search) {
+	public List<SpotifyAlbum> findAlbumsInService(String search) {
 		try {
-			return SpotifyClient.lookupAlbums(search);
+			return spotifyClient.lookupAlbums(search);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

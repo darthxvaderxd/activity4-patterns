@@ -1,14 +1,23 @@
 package com.nilfactor.activity4.util;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Named;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
+@Dependent
+@Named
 public class HibernateUtil {
-	private static final SessionFactory sessionFactory = buildSessionFactory();
-
-    private static SessionFactory buildSessionFactory() {
+	private SessionFactory sessionFactory = buildSessionFactory();
+	
+	public HibernateUtil() {
+		
+	}
+	
+    private SessionFactory buildSessionFactory() {
     	try
 		{
 			if (sessionFactory == null)
@@ -30,11 +39,11 @@ public class HibernateUtil {
 		}
     }
 
-    public static SessionFactory getSessionFactory() {
+    public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
     
-    public static void shutdown() {
+    public void shutdown() {
     	// Close caches and connection pools
     	getSessionFactory().close();
     }

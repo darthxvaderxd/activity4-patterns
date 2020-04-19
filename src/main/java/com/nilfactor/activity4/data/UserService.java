@@ -3,6 +3,11 @@ package com.nilfactor.activity4.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -10,10 +15,18 @@ import org.hibernate.Transaction;
 import com.nilfactor.activity4.model.User;
 import com.nilfactor.activity4.util.HibernateUtil;
 
-// @Stateless
+@Dependent
+@Named
+@Stateless
 public class UserService {
+	@Inject private HibernateUtil hibernateUtil;
+	
+	public UserService() {
+		
+	}
+	
 	/* C of CRUD */
-	public static int registerUser(String username, String password, String firstName, String lastName, String email) {
+	public int registerUser(String username, String password, String firstName, String lastName, String email) {
 		User userExists = getByUsername(username);
 		
 		if (userExists == null) {
@@ -37,10 +50,10 @@ public class UserService {
 		return 0;
 	}
 	
-	public static void saveUser(User user) {
+	public void saveUser(User user) {
 		 Transaction transaction = null;
 	     try {
-	       	Session session = HibernateUtil.getSessionFactory().openSession();
+	       	Session session = hibernateUtil.getSessionFactory().openSession();
 	        			
 	        // start a transaction
 	        transaction = session.beginTransaction();
@@ -58,11 +71,11 @@ public class UserService {
 	
 	/* R of CRUD */
 	@SuppressWarnings("unchecked")
-	public static User getByUsername(String username) {
+	public User getByUsername(String username) {
 		Transaction transaction = null;
 		 try {
 			// start a transaction
-			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			Session session = hibernateUtil.getSessionFactory().getCurrentSession();
 			transaction = session.beginTransaction();
 			
 			String hql = "select u from com.nilfactor.activity4.model.User u where username = :username";
@@ -88,10 +101,10 @@ public class UserService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<User> getUsers() {
+	public List<User> getUsers() {
 		 Transaction transaction = null;
 		 try {
-			 Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			 Session session = hibernateUtil.getSessionFactory().getCurrentSession();
 			 transaction = session.beginTransaction();
 			 Query q = session.createQuery("select u from com.nilfactor.activity4.model.User u");
 			 List<User> users = q.list();

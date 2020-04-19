@@ -3,6 +3,7 @@ package com.nilfactor.activity4.controller;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -13,6 +14,7 @@ import com.nilfactor.activity4.util.SpotifyClient;
 public class SpotifyController {
 	private String clientSecret;
 	private String spotifyUri;
+	@Inject private SpotifyClient spotifyClient;
 	
 	public static void rejectSessionToken() {
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
@@ -51,7 +53,7 @@ public class SpotifyController {
 
 	public String getSpotifyUri() {
 		if (spotifyUri == null) {
-			spotifyUri = SpotifyClient.getSpotifyAuthUrl();
+			spotifyUri = spotifyClient.getSpotifyAuthUrl();
 		}
 		return spotifyUri;
 	}

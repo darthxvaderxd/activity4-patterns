@@ -6,6 +6,7 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,13 +24,16 @@ public class AddAlbumController {
 	private String releaseDate;
 	private List<SpotifySong> results;
 	
+	@Inject private SongService songService;
+	@Inject private AlbumService albumService;
+	
 	public AddAlbumController() {
 		id = loadData("id");
 		album = loadData("album");
 		artist = loadData("band");
 		picture = loadData("picture");
 		releaseDate = loadData("date");
-		results = SongService.findSongForAlbum(id);
+		results = songService.findSongForAlbum(id);
 	}
 	
 	private void loadGetParams() {
@@ -44,7 +48,7 @@ public class AddAlbumController {
 			artist = loadData("band");
 			picture = loadData("picture");
 			releaseDate = loadData("date");
-			results = SongService.findSongForAlbum(id);
+			results = songService.findSongForAlbum(id);
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			HttpServletResponse res = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
 			try {
@@ -92,10 +96,10 @@ public class AddAlbumController {
 	
 	public String saveSongs() {
 		if (results != null) {
-			AlbumService.addAlbum(id);
+			albumService.addAlbum(id);
 			
 			for (int i = 0; i < results.size(); i += 1) {
-				SongService.addSong(results.get(i));
+				songService.addSong(results.get(i));
 			}
 			
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();

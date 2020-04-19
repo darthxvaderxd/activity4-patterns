@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,6 +26,8 @@ public class LoginController implements Serializable {
 	
 	// to be used later
 	private User user;
+	
+	@Inject private UserService userService;
 	
 	public String getUsername() {
 		return username;
@@ -72,7 +75,7 @@ public class LoginController implements Serializable {
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			HttpSession session = req.getSession(false);
 			if (session != null) {
-				user = UserService.getByUsername((String) session.getAttribute("username"));
+				user = userService.getByUsername((String) session.getAttribute("username"));
 			}
 		}
 		
@@ -85,7 +88,7 @@ public class LoginController implements Serializable {
 	
 	public String validateLogin() {
 		// lookup user from database
-		user =  UserService.getByUsername(username);
+		user =  userService.getByUsername(username);
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		HttpSession session = req.getSession(false);
 		

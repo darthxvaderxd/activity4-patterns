@@ -3,6 +3,7 @@ package com.nilfactor.activity4.rest;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -24,6 +25,9 @@ import com.nilfactor.activity4.model.SpotifySong;
 @Produces("application/json")
 @Consumes("application/json")
 public class SpotifyAlbumService extends RestControllerBase {
+	@Inject private AlbumService albumService;
+	@Inject private SongService songService;
+	
 	@GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -35,7 +39,7 @@ public class SpotifyAlbumService extends RestControllerBase {
 		}
 		
 		return Response.status(Response.Status.OK)
-		        .entity(AlbumService.getAllAlbums())
+		        .entity(albumService.getAllAlbums())
 		        .build();
 	}
 	
@@ -50,7 +54,7 @@ public class SpotifyAlbumService extends RestControllerBase {
 		}
 		
 		return Response.status(Response.Status.OK)
-		        .entity(AlbumService.getById(id))
+		        .entity(albumService.getById(id))
 		        .build();
 	}
 	
@@ -64,18 +68,18 @@ public class SpotifyAlbumService extends RestControllerBase {
 		        .build();
 		}
 		
-		AlbumService.addAlbum(album);
+		albumService.addAlbum(album);
 		
 		// Add the album if it exists
 		List<SpotifySong> songs = album.getSongs();
 		if (songs != null && songs.size() > 0) {
 			for(int i = 0; i < songs.size(); i += 1) {
-				SongService.saveSong(songs.get(i));
+				songService.saveSong(songs.get(i));
 			}
 		}
 		
 		return Response.status(Response.Status.OK)
-		        .entity(AlbumService.getById(album.getAlbumId()))
+		        .entity(albumService.getById(album.getAlbumId()))
 		        .build();
 	}
 	
@@ -89,15 +93,15 @@ public class SpotifyAlbumService extends RestControllerBase {
 		        .build();
 		}
 		
-		SpotifyAlbum album = AlbumService.getById(id);
+		SpotifyAlbum album = albumService.getById(id);
 		if (album != null) {
-			List<SpotifySong> songs = SongService.getSongsByAlbumId(id);
+			List<SpotifySong> songs = songService.getSongsByAlbumId(id);
 			if (songs != null && songs.size() > 0) {
 				for(int i = 0; i < songs.size(); i += 1) {
-					SongService.removeSong(songs.get(i));
+					songService.removeSong(songs.get(i));
 				}
 			}
-			AlbumService.removeAlbum(album);
+			albumService.removeAlbum(album);
 		} else {
 			return Response.status(Response.Status.NOT_FOUND)
 			        .entity("{ \"message\": \"album " + id + " does not exist\"}")

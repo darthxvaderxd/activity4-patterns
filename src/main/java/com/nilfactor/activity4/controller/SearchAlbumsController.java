@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.inject.Inject;
 
 import com.nilfactor.activity4.data.AlbumService;
 import com.nilfactor.activity4.model.SpotifyAlbum;
@@ -12,8 +13,9 @@ import com.nilfactor.activity4.model.SpotifyAlbum;
 @ManagedBean(name="search_albums")
 @SessionScoped
 public class SearchAlbumsController {
-	String search;
-	List<SpotifyAlbum> albums = new ArrayList<SpotifyAlbum>();
+	private String search;
+	private List<SpotifyAlbum> albums = new ArrayList<SpotifyAlbum>();
+	@Inject private AlbumService albumService;
 	
 	public String getSearch() {
 		return search;
@@ -32,7 +34,7 @@ public class SearchAlbumsController {
 	}
 	
 	public String searchAlbums() {
-		this.albums = AlbumService.searchWildCardAlbum(search);
+		this.albums = albumService.searchWildCardAlbum(search);
 		return "library_search";
 	}
 }

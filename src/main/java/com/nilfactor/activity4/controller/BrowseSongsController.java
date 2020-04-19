@@ -2,8 +2,10 @@ package com.nilfactor.activity4.controller;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.inject.Inject;
 
 import com.nilfactor.activity4.data.SongService;
 import com.nilfactor.activity4.model.SpotifySong;
@@ -11,10 +13,16 @@ import com.nilfactor.activity4.model.SpotifySong;
 @ManagedBean(name="browse_songs")
 @SessionScoped
 public class BrowseSongsController {
-	List<SpotifySong> songs;
+	private List<SpotifySong> songs;
+	@Inject private SongService songService;
 	
 	public BrowseSongsController() {
-		songs = SongService.getAllSongs();
+		
+	}
+	
+	@PostConstruct
+	void init() {
+		songs = songService.getAllSongs();
 	}
 	
 	public List<SpotifySong> getSongs() {
@@ -22,7 +30,7 @@ public class BrowseSongsController {
 	}
 	
 	public String refresh() {
-		songs = SongService.getAllSongs();
+		songs = songService.getAllSongs();
 		
 		return "browse";
 	}

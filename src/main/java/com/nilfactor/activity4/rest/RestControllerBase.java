@@ -1,10 +1,14 @@
 package com.nilfactor.activity4.rest;
 import java.util.Base64;
 
+import javax.inject.Inject;
+
 import com.nilfactor.activity4.data.UserService;
 import com.nilfactor.activity4.model.User;
 
 class RestControllerBase {
+	@Inject private UserService userService;
+	
 	/*
 	 * This is for those who need to create the base64 encoded header value for Authorization
 	 */
@@ -35,7 +39,7 @@ class RestControllerBase {
 	       
 	        String username = decodedParts[0];
 	        String password = decodedParts[1];
-	        User user = UserService.getByUsername(username);
+	        User user = userService.getByUsername(username);
 	        
 	        System.out.println("Username => " + user.getUsername());
 	        System.out.println("Password => " + user.getPassword());

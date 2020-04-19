@@ -2,6 +2,8 @@ package com.nilfactor.activity4.model;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Named;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+@Dependent
+@Named
 @Entity(name = "com.nilfactor.activity4.model.User")
 @XmlRootElement
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "user_id"))

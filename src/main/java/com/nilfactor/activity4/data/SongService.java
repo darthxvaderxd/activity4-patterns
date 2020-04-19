@@ -8,22 +8,40 @@ import com.nilfactor.activity4.model.SpotifySong;
 import com.nilfactor.activity4.util.HibernateUtil;
 import com.nilfactor.activity4.util.SpotifyClient;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.*;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+@Dependent
+@Named
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class SongService {
-	private static List<SpotifySong> songs = getSongs();
+	private List<SpotifySong> songs;
+	@Inject private SpotifyClient spotifyClient;
+	@Inject private AlbumService albumService;
+	@Inject private HibernateUtil hibernateUtil;
+	
+	public SongService() {
+		
+	}
+	
+	@PostConstruct
+	void init() {
+		songs = getSongs();
+	}
 	
 	/* C of CRUD */
-	public static void saveSong(SpotifySong song) {
+	public void saveSong(SpotifySong song) {
 		 Transaction transaction = null;
 	     try {
-	       	Session session = HibernateUtil.getSessionFactory().openSession();
+	       	Session session = hibernateUtil.getSessionFactory().openSession();
 	        			
 	        // start a transaction
 	        transaction = session.beginTransaction();
@@ -41,11 +59,11 @@ public class SongService {
 	
 	/* R of CRUD */
 	@SuppressWarnings("unchecked")
-	public static SpotifySong getById(String id) {
+	public SpotifySong getById(String id) {
 		Transaction transaction = null;
 		 try {
 			// start a transaction
-			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			Session session = hibernateUtil.getSessionFactory().getCurrentSession();
 			transaction = session.beginTransaction();
 			
 			String hql = "select s from com.nilfactor.activity4.model.SpotifySong s where id = :id";
@@ -71,11 +89,11 @@ public class SongService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<SpotifySong> getSongsByAlbumId(String albumId) {
+	public List<SpotifySong> getSongsByAlbumId(String albumId) {
 		Transaction transaction = null;
 		 try {
 			// start a transaction
-			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			Session session = hibernateUtil.getSessionFactory().getCurrentSession();
 			transaction = session.beginTransaction();
 			
 			String hql = "select s from com.nilfactor.activity4.model.SpotifySong s where albumId = :albumId";
@@ -101,11 +119,11 @@ public class SongService {
 	}
 	
 	/* D of CRUD */
-	public static void deleteSong(SpotifySong song) {
+	public void deleteSong(SpotifySong song) {
 		Transaction transaction = null;
 		 try {
 			// start a transaction
-			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			Session session = hibernateUtil.getSessionFactory().getCurrentSession();
 			transaction = session.beginTransaction();
 			session.delete(song);
 			transaction.commit();
@@ -119,13 +137,25 @@ public class SongService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<SpotifySong> getSongs() {
+	public List<SpotifySong> getSongs() {
 		 Transaction transaction = null;
 		 try {
-			 Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			 Session session = hibernateUtil.getSessionFactory().getCurrentSession();
 			 transaction = session.beginTransaction();
 			 Query q = session.createQuery("select s from com.nilfactor.activity4.model.SpotifySong s");
 			 List<SpotifySong> songs = q.list();
+			 
+			 if (songs != null && songs.size() > 0) {
+				 for (int i = 0; i < songs.size(); i += 1) {
+					 SpotifySong song = songs.get(i);
+					 List<SpotifyAlbum> al = session.createQuery("select a from com.nilfactor.activity4.model.SpotifyAlbum a where albumId = :albumId")
+							 .setParameter("albumId", song.getAlbumId())
+							 .list();
+					 
+					 if (al != null && al.size() > 0)
+						 song.setSpotifyAlbum(al.get(0));
+				 }
+			 }
 			 
 			 transaction.commit();
 			 return songs;
@@ -139,29 +169,29 @@ public class SongService {
 		 return new ArrayList<SpotifySong>();
 	}
 	
-	public static int getSongCount() {
+	public int getSongCount() {
 		return songs.size();
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public static void addSong(SpotifySong song) {
+	public void addSong(SpotifySong song) {
 		SpotifyAlbum album = song.getSpotifyAlbum();
 		
 		if (album == null) {
-			song.setSpotifyAlbum(AlbumService.getAlbum(song.getAlbumId()));
+			song.setSpotifyAlbum(albumService.getAlbum(song.getAlbumId()));
 		}
 		saveSong(song);
 		songs.add(song);
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public static void removeSong(SpotifySong song) {
+	public void removeSong(SpotifySong song) {
 		songs.remove(song);
 		deleteSong(song);
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public static SpotifySong getSong(String id) {
+	public SpotifySong getSong(String id) {
 		for (int i = 0; i < songs.size(); i += 1) {
 			SpotifySong song = songs.get(i);
 			if (song.getId().equals(id)) {
@@ -173,21 +203,21 @@ public class SongService {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public static void addSongs(List<SpotifySong> s) {
+	public void addSongs(List<SpotifySong> s) {
 		for (int i = 0; i < s.size(); i += 1) {
 			songs.add(s.get(i));
 		}
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public static List<SpotifySong> getAllSongs() {
+	public List<SpotifySong> getAllSongs() {
 		return songs;
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public static List<SpotifySong> findSongForAlbum(String id) {
+	public List<SpotifySong> findSongForAlbum(String id) {
 		try {
-			return SpotifyClient.lookupAlbumTracks(id, (long) 0);
+			return spotifyClient.lookupAlbumTracks(id, (long) 0);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

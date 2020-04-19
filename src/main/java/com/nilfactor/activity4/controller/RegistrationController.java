@@ -3,6 +3,7 @@ package com.nilfactor.activity4.controller;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,9 @@ public class RegistrationController {
 	private String email;
 	
 	private String message;
+	@Inject private UserService userService;
+	
+	
 	
 	public String getUsername() {
 		return username;
@@ -100,7 +104,7 @@ public class RegistrationController {
 	}
 
 	public String register() {
-		int result = UserService.registerUser(username, password, firstName, lastName, email);
+		int result = userService.registerUser(username, password, firstName, lastName, email);
 		System.out.println("Debug result of register => " + result);
 		if (result == 1) {
 			return "registered";

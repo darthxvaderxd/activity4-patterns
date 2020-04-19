@@ -3,19 +3,25 @@ package com.nilfactor.activity4.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -23,6 +29,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nilfactor.activity4.data.SongService;
 import com.nilfactor.activity4.util.StringListConverter;
 
+@Dependent
+@Named
+@Singleton
 @Entity(name = "com.nilfactor.activity4.model.SpotifyAlbum")
 @XmlRootElement
 @Table(name = "spotify_album", uniqueConstraints = @UniqueConstraint(columnNames = "album_id"))
@@ -31,6 +40,8 @@ public class SpotifyAlbum implements Serializable {
      * Default value included to remove warning. Remove or modify at will.
      **/
     private static final long serialVersionUID = 1L;
+    
+    @Inject private SongService songService;
     
     @Id
     @Column(name = "album_id", unique=true, nullable = false)
@@ -74,9 +85,21 @@ public class SpotifyAlbum implements Serializable {
     @Column(name="link")
 	private String link;
     
-    @OneToMany(cascade=CascadeType.ALL)
-    @JoinColumn(name="album",referencedColumnName="album_id", insertable=false, updatable=false)
+    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinTable(name="spotify_album",
+    	joinColumns= {@JoinColumn(name="album_id", referencedColumnName="albumId", insertable=false, updatable=false)},
+    	inverseJoinColumns={@JoinColumn(name="album_id", referencedColumnName="albumId")}
+    )
 	private List<SpotifySong> songs;
+    
+    @PostConstruct
+    public void init() {
+    	System.out.println("Moo...");
+    	if (songs == null) {
+    		System.out.println("Moo...");
+			songs = songService.findSongForAlbum(albumId);
+		}
+    }
 	
 	public String getImageLink() {
 		return imageLink;
@@ -175,10 +198,6 @@ public class SpotifyAlbum implements Serializable {
 	
 	@JsonIgnore
 	public List<SpotifySong> getSongs() {
-		if (songs == null) {
-			songs = SongService.findSongForAlbum(albumId);
-		}
-		
 		return songs;
 	}
 }
