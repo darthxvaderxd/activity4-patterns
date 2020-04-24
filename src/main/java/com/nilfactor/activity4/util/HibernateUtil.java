@@ -35,9 +35,8 @@ public class HibernateUtil {
 				return configuration.buildSessionFactory(serviceRegistry);
 			}
 			return sessionFactory;
-		} catch (Throwable ex)
-		{
-			System.err.println("Initial SessionFactory creation failed." + ex);
+		} catch (Throwable ex) {
+			ServiceService.getLogger(this.getClass().getName()).error("Initial SessionFactory creation failed." + ex);
 			throw new ExceptionInInitializerError(ex);
 		}
     }

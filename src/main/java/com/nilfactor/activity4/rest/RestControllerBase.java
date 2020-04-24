@@ -7,6 +7,7 @@ import javax.interceptor.Interceptors;
 import com.nilfactor.activity4.data.UserService;
 import com.nilfactor.activity4.model.User;
 import com.nilfactor.activity4.util.LogInterceptor;
+import com.nilfactor.activity4.util.ServiceService;
 
 class RestControllerBase {
 	@Inject private UserService userService;
@@ -35,7 +36,7 @@ class RestControllerBase {
 	        
 	        String[] decodedParts = decodedAuth.split(":");
 	        
-	        System.out.println("Decoded => " + decodedAuth);
+	        ServiceService.getLogger(this.getClass().getName()).debug("Decoded => " + decodedAuth);
 	        
 	        if (decodedParts.length < 2) {
 	        	return false;
@@ -45,14 +46,14 @@ class RestControllerBase {
 	        String password = decodedParts[1];
 	        User user = userService.getByUsername(username);
 	        
-	        System.out.println("Username => " + user.getUsername());
-	        System.out.println("Password => " + user.getPassword());
+	        ServiceService.getLogger(this.getClass().getName()).debug("Username => " + user.getUsername());
+	        ServiceService.getLogger(this.getClass().getName()).debug("Password => " + user.getPassword());
 	        
 	        if (user.getPassword().equals(password)) {
 	        	return true;
 	        }
 		} catch (Exception e) {
-        	System.out.println(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
         	return false;
         }
          

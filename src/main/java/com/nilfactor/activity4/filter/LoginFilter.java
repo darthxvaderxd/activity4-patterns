@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.nilfactor.activity4.util.LogInterceptor;
+import com.nilfactor.activity4.util.ServiceService;
 
 @WebFilter(filterName = "AuthFilter", urlPatterns = { "*.xhtml" })
 @Interceptors(LogInterceptor.class)
@@ -42,7 +43,8 @@ public class LoginFilter implements Filter {
 				res.sendRedirect(req.getContextPath() + "/faces/login.xhtml");
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 		}
 	}
 

@@ -57,11 +57,11 @@ public class SpotifyClient {
 				JSONObject data = (JSONObject) JSONValue.parse(EntityUtils.toString(response.getEntity()));;
 				JSONObject error = (JSONObject) data.get("error");
 				
-				System.out.println("Debug httpResponse => " + httpResponse);
-				System.out.println("Debug dataString => " + data.toJSONString());
+				ServiceService.getLogger(this.getClass().getName()).debug("httpResponse => " + httpResponse);
+				ServiceService.getLogger(this.getClass().getName()).debug("dataString => " + data.toJSONString());
 				
 				if (error != null && (Long) error.get("status") == 401) {
-					System.out.println("Need to refresh token?");
+					ServiceService.getLogger(this.getClass().getName()).warn("Need to refresh token?");
 					SpotifyController.rejectSessionToken();
 				} else {
 					List<JSONObject> songs = (List<JSONObject>) data.get("items");
@@ -115,12 +115,12 @@ public class SpotifyClient {
 				JSONObject data = (JSONObject) JSONValue.parse(EntityUtils.toString(response.getEntity()));;
 				JSONObject error = (JSONObject) data.get("error");
 				
-				System.out.println("Debug httpResponse => " + httpResponse);
-				System.out.println("Debug dataString => " + data.toJSONString());
+				ServiceService.getLogger(this.getClass().getName()).debug("httpResponse => " + httpResponse);
+				ServiceService.getLogger(this.getClass().getName()).debug("dataString => " + data.toJSONString());
 				
 				
 				if (error != null && (Long) error.get("status") == 401) {
-					System.out.println("Need to refresh token?");
+					ServiceService.getLogger(this.getClass().getName()).warn("Need to refresh token?");
 					SpotifyController.rejectSessionToken();
 				} else {
 					SpotifyAlbum spotifyAlbum = new SpotifyAlbum();
@@ -174,12 +174,12 @@ public class SpotifyClient {
 				JSONObject data = (JSONObject) JSONValue.parse(EntityUtils.toString(response.getEntity()));;
 				JSONObject error = (JSONObject) data.get("error");
 				
-				System.out.println("Debug httpResponse => " + httpResponse);
-				System.out.println("Debug dataString => " + data.toJSONString());
+				ServiceService.getLogger(this.getClass().getName()).debug("httpResponse => " + httpResponse);
+				ServiceService.getLogger(this.getClass().getName()).debug("dataString => " + data.toJSONString());
 				
 				
 				if (error != null && (Long) error.get("status") == 401) {
-					System.out.println("Need to refresh token?");
+					ServiceService.getLogger(this.getClass().getName()).warn("Need to refresh token?");
 					SpotifyController.rejectSessionToken();
 				} else {
 					JSONObject jsonAlbums = (JSONObject) data.get("albums"); 

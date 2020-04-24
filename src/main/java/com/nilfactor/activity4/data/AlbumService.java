@@ -59,10 +59,11 @@ public class AlbumService {
 	        // commit transaction
 	       transaction.commit();
 	     } catch (Exception e) {
-	    	 if (transaction != null) {
-	    		 transaction.rollback();
-	         }
-	         e.printStackTrace();
+	    	if (transaction != null) {
+	    		transaction.rollback();
+	        }
+	    	ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 	     }
 	 }
 	
@@ -89,10 +90,11 @@ public class AlbumService {
 				return results.get(0);
 			}
 	     } catch (Exception e) {
-	    	 if (transaction != null) {
-	    		 transaction.rollback();
-	         }
-	         e.printStackTrace();
+	    	if (transaction != null) {
+	    		transaction.rollback();
+	        }
+	    	ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 	     }
 		 
 		 return null;
@@ -110,10 +112,11 @@ public class AlbumService {
 			transaction.commit();
 			
 	     } catch (Exception e) {
-	    	 if (transaction != null) {
-	    		 transaction.rollback();
-	         }
-	         e.printStackTrace();
+	    	if (transaction != null) {
+	    		transaction.rollback();
+	        }
+	    	ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 	     }
 	}
 	
@@ -141,10 +144,11 @@ public class AlbumService {
 				return results;
 			}
 	     } catch (Exception e) {
-	    	 if (transaction != null) {
-	    		 transaction.rollback();
-	         }
-	         e.printStackTrace();
+	    	if (transaction != null) {
+	    		transaction.rollback();
+	        }
+	    	ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 	     }
 		 
 		 return null;
@@ -175,10 +179,11 @@ public class AlbumService {
 			 transaction.commit();
 			 return albums;
 		 } catch (Exception e) {
-			 if (transaction != null) {
-	    		 transaction.rollback();
-	         }
-	         e.printStackTrace();
+			if (transaction != null) {
+				 transaction.rollback();
+	        }
+			ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 	     }
 		 
 		 return new ArrayList<SpotifyAlbum>();
@@ -251,7 +256,8 @@ public class AlbumService {
 			return spotifyClient.lookupAlbums(search);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 		}
 		
 		return null;

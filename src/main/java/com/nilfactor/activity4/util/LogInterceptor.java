@@ -2,6 +2,7 @@ package com.nilfactor.activity4.util;
 
 import javax.interceptor.*;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 @Interceptor
 public class LogInterceptor {
@@ -9,15 +10,15 @@ public class LogInterceptor {
     public Object onConstruct(InvocationContext context) {
     	String className = context.getClass().getName();
     	Logger logger = Logger.getLogger(context.getClass().getName());
+    	Object result = null;
     	
-    	System.out.println(className + " created");
 		try {
 			logger.debug(className + " created");
-			return context.proceed();
+			result = context.proceed();
 		} catch (Exception error) {
 			logger.error(className + " had the following error" + error.getMessage());
 		}
-		return null;
+		return result;
     }
     
 	@AroundInvoke
@@ -27,18 +28,21 @@ public class LogInterceptor {
         String methodName = context.getMethod().getName();
 		Logger logger = Logger.getLogger(context.getClass().getName());
 		Object[] params = (Object[]) context.getParameters();
+		Object result = null;
 		
 		if (targetClassName != null) { // override the proxy name (Injected classes)
 			className = targetClassName.replace("$Proxy$_$$_WeldSubclass", "");
 		}
 		
-		System.out.println(className + "." + methodName + " with " + params.length + " params was called");
+		logger.debug(className + "." + methodName + " call has started");
         try {
         	logger.debug(className + "." + methodName + " with " + params.length + " params was called");
-        	return context.proceed();
+        	result = context.proceed();
         } catch (Exception error) {
         	logger.error(className + "." + methodName + " had the following error" + error.getMessage());
         }
-        return null;
+        
+        logger.debug(className + "." + methodName + " call has finished");
+        return result;
 	}
 }

@@ -3,6 +3,8 @@ package com.nilfactor.activity4.util;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.apache.log4j.Logger;
+
 import com.nilfactor.activity4.data.AlbumService;
 import com.nilfactor.activity4.data.SongService;
 
@@ -12,6 +14,10 @@ public class ServiceService {
 	@Inject private static AlbumService albumService;
 	@Inject private static SongService songService;
 	@Inject private static HibernateUtil hibernateUtil;
+	
+	public static Logger getLogger(String className) {
+		return Logger.getLogger(className);
+	}
 	
 	@Interceptors(LogInterceptor.class)
 	public static SpotifyClient getSpotifyClient() {

@@ -16,6 +16,7 @@ import org.hibernate.Transaction;
 import com.nilfactor.activity4.model.User;
 import com.nilfactor.activity4.util.HibernateUtil;
 import com.nilfactor.activity4.util.LogInterceptor;
+import com.nilfactor.activity4.util.ServiceService;
 
 @Dependent
 @Named
@@ -67,10 +68,11 @@ public class UserService {
 	        // commit transaction
 	       transaction.commit();
 	     } catch (Exception e) {
-	    	 if (transaction != null) {
-	    		 transaction.rollback();
-	         }
-	         e.printStackTrace();
+	    	if (transaction != null) {
+	    		transaction.rollback();
+	        }
+	    	ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 	     }
 	 }
 	
@@ -97,10 +99,11 @@ public class UserService {
 				return results.get(0);
 			}
 	     } catch (Exception e) {
-	    	 if (transaction != null) {
-	    		 transaction.rollback();
-	         }
-	         e.printStackTrace();
+	    	if (transaction != null) {
+	    		transaction.rollback();
+	        }
+	    	ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 	     }
 		 
 		 return null;
@@ -119,10 +122,11 @@ public class UserService {
 			 transaction.commit();
 			 return users;
 		 } catch (Exception e) {
-			 if (transaction != null) {
-	    		 transaction.rollback();
-	         }
-	         e.printStackTrace();
+			if (transaction != null) {
+	    		transaction.rollback();
+	        }
+			ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 	     }
 		 
 		 return new ArrayList<User>();

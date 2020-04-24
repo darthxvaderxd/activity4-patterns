@@ -55,10 +55,11 @@ public class SongService {
 	        // commit transaction
 	       transaction.commit();
 	     } catch (Exception e) {
-	    	 if (transaction != null) {
-	    		 transaction.rollback();
-	         }
-	         e.printStackTrace();
+	    	if (transaction != null) {
+	    		transaction.rollback();
+	        }
+	    	ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 	     }
 	 }
 	
@@ -85,10 +86,11 @@ public class SongService {
 				return results.get(0);
 			}
 	     } catch (Exception e) {
-	    	 if (transaction != null) {
+	    	if (transaction != null) {
 	    		 transaction.rollback();
-	         }
-	         e.printStackTrace();
+	        }
+	    	ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 	     }
 		 
 		 return null;
@@ -116,10 +118,11 @@ public class SongService {
 				return results;
 			}
 	     } catch (Exception e) {
-	    	 if (transaction != null) {
-	    		 transaction.rollback();
-	         }
-	         e.printStackTrace();
+	    	if (transaction != null) {
+	    		transaction.rollback();
+	        }
+	    	ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 	     }
 		 
 		 return null;
@@ -137,10 +140,11 @@ public class SongService {
 			transaction.commit();
 			
 	     } catch (Exception e) {
-	    	 if (transaction != null) {
-	    		 transaction.rollback();
-	         }
-	         e.printStackTrace();
+	    	if (transaction != null) {
+	    		transaction.rollback();
+	        }
+	    	ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 	     }
 	}
 	
@@ -239,7 +243,8 @@ public class SongService {
 			return spotifyClient.lookupAlbumTracks(id, (long) 0);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+			ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 		}
 		
 		return null;

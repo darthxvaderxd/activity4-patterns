@@ -59,7 +59,8 @@ public class AddAlbumController {
 				res.sendRedirect(req.getContextPath() + "/faces/add_album_songs.xhtml");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+				ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 			}
 		}
 	}
@@ -120,7 +121,8 @@ public class AddAlbumController {
 				res.sendRedirect(req.getContextPath() + "/faces/user.xhtml");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ServiceService.getLogger(this.getClass().getName()).error(e.getMessage());
+				ServiceService.getLogger(this.getClass().getName()).error(e.getStackTrace());
 			}
 		}
 		return "saved";
