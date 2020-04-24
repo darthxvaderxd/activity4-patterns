@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -19,15 +20,18 @@ import com.nilfactor.activity4.data.AlbumService;
 import com.nilfactor.activity4.data.SongService;
 import com.nilfactor.activity4.model.SpotifyAlbum;
 import com.nilfactor.activity4.model.SpotifySong;
+import com.nilfactor.activity4.util.LogInterceptor;
 
 @RequestScoped
 @Path("/albums")
 @Produces("application/json")
 @Consumes("application/json")
+@Interceptors(LogInterceptor.class)
 public class SpotifyAlbumService extends RestControllerBase {
 	@Inject private AlbumService albumService;
 	@Inject private SongService songService;
 	
+	@Interceptors(LogInterceptor.class)
 	@GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -43,6 +47,7 @@ public class SpotifyAlbumService extends RestControllerBase {
 		        .build();
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -58,6 +63,7 @@ public class SpotifyAlbumService extends RestControllerBase {
 		        .build();
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -83,6 +89,7 @@ public class SpotifyAlbumService extends RestControllerBase {
 		        .build();
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)

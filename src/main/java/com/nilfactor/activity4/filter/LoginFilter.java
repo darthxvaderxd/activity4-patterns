@@ -1,5 +1,7 @@
 package com.nilfactor.activity4.filter;
 import java.io.IOException;
+
+import javax.interceptor.Interceptors;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -11,9 +13,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.nilfactor.activity4.util.LogInterceptor;
+
 @WebFilter(filterName = "AuthFilter", urlPatterns = { "*.xhtml" })
+@Interceptors(LogInterceptor.class)
 public class LoginFilter implements Filter {
 	@Override
+	@Interceptors(LogInterceptor.class)
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain c) throws IOException, ServletException {
 		try {
 			// cast response/request to HttpServelet versions
@@ -41,11 +47,13 @@ public class LoginFilter implements Filter {
 	}
 
 	@Override
+	@Interceptors(LogInterceptor.class)
 	public void destroy() {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
+	@Interceptors(LogInterceptor.class)
 	public void init(FilterConfig arg0) throws ServletException {
 		// TODO Auto-generated method stub
 	}

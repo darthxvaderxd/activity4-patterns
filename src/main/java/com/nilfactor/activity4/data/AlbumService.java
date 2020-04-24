@@ -6,13 +6,15 @@ import java.util.List;
 import com.nilfactor.activity4.model.SpotifyAlbum;
 import com.nilfactor.activity4.model.SpotifySong;
 import com.nilfactor.activity4.util.HibernateUtil;
+import com.nilfactor.activity4.util.LogInterceptor;
+import com.nilfactor.activity4.util.ServiceService;
 import com.nilfactor.activity4.util.SpotifyClient;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 import javax.inject.Named;
+import javax.interceptor.Interceptors;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -26,22 +28,25 @@ import org.hibernate.criterion.Restrictions;
 @Named
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
+@Interceptors(LogInterceptor.class)
 public class AlbumService {
 	private List<SpotifyAlbum> albums;
-	@Inject private HibernateUtil hibernateUtil;
-	@Inject private SpotifyClient spotifyClient;
+	private HibernateUtil hibernateUtil = ServiceService.getHibernateUtil();
+	private SpotifyClient spotifyClient = ServiceService.getSpotifyClient();
 	
 	
 	public AlbumService() {
 		
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	@PostConstruct
-	void init() {
+	public void init() {
 		albums = getAlbums();
 	}
 	
 	/* C of CRUD */
+	@Interceptors(LogInterceptor.class)
 	public void saveAlbum(SpotifyAlbum album) {
 		 Transaction transaction = null;
 	     try {
@@ -62,6 +67,7 @@ public class AlbumService {
 	 }
 	
 	/* R of CRUD */
+	@Interceptors(LogInterceptor.class)
 	@SuppressWarnings("unchecked")
 	public SpotifyAlbum getById(String id) {
 		Transaction transaction = null;
@@ -93,6 +99,7 @@ public class AlbumService {
 	}
 	
 	/* D of CRUD */
+	@Interceptors(LogInterceptor.class)
 	public void deleteAlbum(SpotifyAlbum album) {
 		Transaction transaction = null;
 		 try {
@@ -111,6 +118,7 @@ public class AlbumService {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Interceptors(LogInterceptor.class)
 	public List<SpotifyAlbum> searchWildCardAlbum(String search) {
 		Transaction transaction = null;
 		 try {
@@ -143,6 +151,7 @@ public class AlbumService {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Interceptors(LogInterceptor.class)
 	public List<SpotifyAlbum> getAlbums() {
 		 Transaction transaction = null;
 		 try {
@@ -178,11 +187,16 @@ public class AlbumService {
 	
 	/* Utility functions to handle bl */
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors(LogInterceptor.class)
 	public int getAlbumCount() {
+		if (albums == null) {
+			return 0;
+		}
 		return albums.size();
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors(LogInterceptor.class)
 	public void addAlbum(String id) {
 		try {
 			SpotifyAlbum album = spotifyClient.lookupAlbum(id);
@@ -195,35 +209,43 @@ public class AlbumService {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors(LogInterceptor.class)
 	public void addAlbum(SpotifyAlbum album) {
 		saveAlbum(album);
 		albums.add(album);
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors(LogInterceptor.class)
 	public void removeAlbum(SpotifyAlbum album) {
 		deleteAlbum(album);
 		albums.remove(album);
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors(LogInterceptor.class)
 	public SpotifyAlbum getAlbum(String id) {
-		for (int i = 0; i < albums.size(); i += 1) {
-			SpotifyAlbum album = albums.get(i);
-			if (album.getAlbumId().equals(id)) {
-				return album;
-			}
+		if (albums == null) {
+			albums = getAlbums();
 		}
+			for (int i = 0; i < albums.size(); i += 1) {
+				SpotifyAlbum album = albums.get(i);
+				if (album.getAlbumId().equals(id)) {
+					return album;
+				}
+			}
 		 
 		return null;
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors(LogInterceptor.class)
 	public List<SpotifyAlbum> getAllAlbums() {
 		return albums;
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors(LogInterceptor.class)
 	public List<SpotifyAlbum> findAlbumsInService(String search) {
 		try {
 			return spotifyClient.lookupAlbums(search);

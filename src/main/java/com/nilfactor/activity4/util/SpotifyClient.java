@@ -19,14 +19,17 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Named;
+import javax.interceptor.Interceptors;
 
 @Dependent
 @Named
+@Interceptors(LogInterceptor.class)
 public class SpotifyClient {
 	private String clientId = "6024456da7984f6ea98ee546114fd468";
 	private final CloseableHttpClient httpClient = HttpClients.createDefault();
 	
 	@SuppressWarnings("deprecation")
+	@Interceptors(LogInterceptor.class)
 	public String getSpotifyAuthUrl() {
 		return "https://accounts.spotify.com/authorize?response_type=token"
 				+ "&client_id=" + clientId
@@ -35,6 +38,7 @@ public class SpotifyClient {
 	}
 	
 	@SuppressWarnings({ "unchecked", "deprecation" })
+	@Interceptors(LogInterceptor.class)
 	public List<SpotifySong> lookupAlbumTracks(String id, Long offset) throws Exception {
 		String authToken = SpotifyController.getSessionToken();
 		List<SpotifySong> spotifySongs = new ArrayList<SpotifySong>();
@@ -97,6 +101,7 @@ public class SpotifyClient {
 	}
 	
 	@SuppressWarnings({ "unchecked", "deprecation" })
+	@Interceptors(LogInterceptor.class)
 	public SpotifyAlbum lookupAlbum(String id) throws Exception {
 		String authToken = SpotifyController.getSessionToken();
 		if (authToken != null) {
@@ -151,6 +156,7 @@ public class SpotifyClient {
 	}
 	
 	@SuppressWarnings({ "unchecked", "deprecation" })
+	@Interceptors(LogInterceptor.class)
 	public List<SpotifyAlbum> lookupAlbums(String album) throws Exception {
 		String authToken = SpotifyController.getSessionToken();
 		List<SpotifyAlbum> spotifyAlbums = new ArrayList<SpotifyAlbum>();

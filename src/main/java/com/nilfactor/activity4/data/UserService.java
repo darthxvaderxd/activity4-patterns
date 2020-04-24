@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.interceptor.Interceptors;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -14,10 +15,12 @@ import org.hibernate.Transaction;
 
 import com.nilfactor.activity4.model.User;
 import com.nilfactor.activity4.util.HibernateUtil;
+import com.nilfactor.activity4.util.LogInterceptor;
 
 @Dependent
 @Named
 @Stateless
+@Interceptors(LogInterceptor.class)
 public class UserService {
 	@Inject private HibernateUtil hibernateUtil;
 	
@@ -26,6 +29,7 @@ public class UserService {
 	}
 	
 	/* C of CRUD */
+	@Interceptors(LogInterceptor.class)
 	public int registerUser(String username, String password, String firstName, String lastName, String email) {
 		User userExists = getByUsername(username);
 		
@@ -50,6 +54,7 @@ public class UserService {
 		return 0;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public void saveUser(User user) {
 		 Transaction transaction = null;
 	     try {
@@ -71,6 +76,7 @@ public class UserService {
 	
 	/* R of CRUD */
 	@SuppressWarnings("unchecked")
+	@Interceptors(LogInterceptor.class)
 	public User getByUsername(String username) {
 		Transaction transaction = null;
 		 try {
@@ -101,6 +107,7 @@ public class UserService {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Interceptors(LogInterceptor.class)
 	public List<User> getUsers() {
 		 Transaction transaction = null;
 		 try {

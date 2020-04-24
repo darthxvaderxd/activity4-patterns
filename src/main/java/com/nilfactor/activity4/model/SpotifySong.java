@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.interceptor.Interceptors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nilfactor.activity4.data.AlbumService;
+import com.nilfactor.activity4.util.LogInterceptor;
 
 @ManagedBean
 @Dependent
@@ -30,6 +32,7 @@ import com.nilfactor.activity4.data.AlbumService;
 @Entity(name = "com.nilfactor.activity4.model.SpotifySong")
 @XmlRootElement
 @Table(name = "spotify_song", uniqueConstraints = @UniqueConstraint(columnNames = "song_id"))
+@Interceptors(LogInterceptor.class)
 public class SpotifySong implements Serializable {
 	/**
      * Default value included to remove warning. Remove or modify at will.
@@ -77,73 +80,89 @@ public class SpotifySong implements Serializable {
 	)
 	private SpotifyAlbum spotifyAlbum;
 	
+	@Interceptors(LogInterceptor.class)
 	public String getId() {
 		return id;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public void setId(String id) {
 		this.id = id;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public Long getDisc() {
 		return disc;
 	}
 	
 	@XmlElement
+	@Interceptors(LogInterceptor.class)
 	public void setDisc(Long disc) {
 		this.disc = disc;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public Long getTrackNumber() {
 		return trackNumber;
 	}
 	
 	@XmlElement
+	@Interceptors(LogInterceptor.class)
 	public void setTrackNumber(Long trackNumber) {
 		this.trackNumber = trackNumber;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public Long getDuration() {
 		return duration;
 	}
 	
 	@XmlElement
+	@Interceptors(LogInterceptor.class)
 	public void setDuration(Long duration) {
 		this.duration = duration;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public String getPreviewUrl() {
 		return previewUrl;
 	}
 	
 	@XmlElement
+	@Interceptors(LogInterceptor.class)
 	public void setPreviewUrl(String previewUrl) {
 		this.previewUrl = previewUrl;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public String getName() {
 		return name;
 	}
 	
 	@XmlElement
+	@Interceptors(LogInterceptor.class)
 	public void setName(String name) {
 		this.name = name;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public String getAlbumId() {
 		return albumId;
 	}
 	
 	@XmlElement
+	@Interceptors(LogInterceptor.class)
 	public void setAlbumId(String albumId) {
 		this.albumId = albumId;
 	}
 
+	@Interceptors(LogInterceptor.class)
 	public SpotifyAlbum getSpotifyAlbum() {
 		return spotifyAlbum;
 	}
 
 	@XmlElement
+	@Interceptors(LogInterceptor.class)
 	public void setSpotifyAlbum(SpotifyAlbum spotifyAlbum) {
 		this.spotifyAlbum = spotifyAlbum;
 		this.albumId = spotifyAlbum.getAlbumId();

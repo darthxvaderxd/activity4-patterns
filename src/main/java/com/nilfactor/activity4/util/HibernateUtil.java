@@ -2,6 +2,7 @@ package com.nilfactor.activity4.util;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Named;
+import javax.interceptor.Interceptors;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -10,6 +11,7 @@ import org.hibernate.service.ServiceRegistry;
 
 @Dependent
 @Named
+@Interceptors(LogInterceptor.class)
 public class HibernateUtil {
 	private SessionFactory sessionFactory = buildSessionFactory();
 	
@@ -17,6 +19,7 @@ public class HibernateUtil {
 		
 	}
 	
+	@Interceptors(LogInterceptor.class)
     private SessionFactory buildSessionFactory() {
     	try
 		{
@@ -39,10 +42,12 @@ public class HibernateUtil {
 		}
     }
 
+	@Interceptors(LogInterceptor.class)
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
     
+	@Interceptors(LogInterceptor.class)
     public void shutdown() {
     	// Close caches and connection pools
     	getSessionFactory().close();

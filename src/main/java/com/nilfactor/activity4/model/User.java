@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Named;
+import javax.interceptor.Interceptors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,11 +19,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.nilfactor.activity4.util.LogInterceptor;
+
 @Dependent
 @Named
 @Entity(name = "com.nilfactor.activity4.model.User")
 @XmlRootElement
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "user_id"))
+@Interceptors(LogInterceptor.class)
 public class User implements Serializable {
 	/**
      * Default value included to remove warning. Remove or modify at will.
@@ -73,55 +77,67 @@ public class User implements Serializable {
 		this.password = password;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public Long getUserId() {
 		return userId;
 	}
 
+	@Interceptors(LogInterceptor.class)
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public String getFirstName() {
 		return firstName;
 	}
 	
 	@XmlElement 
+	@Interceptors(LogInterceptor.class)
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public String getLastName() {
 		return lastName;
 	}
 	
 	@XmlElement
+	@Interceptors(LogInterceptor.class)
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public String getEmail() {
 		return email;
 	}
 	
 	@XmlElement 
+	@Interceptors(LogInterceptor.class)
 	public void setEmail(String email) {
 		this.email = email;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public String getUsername() {
 		return username;
 	}
 	
 	@XmlElement 
+	@Interceptors(LogInterceptor.class)
 	public void setUsername(String username) {
 		this.username = username;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public String getPassword() {
 		return password;
 	}
 	
 	@XmlElement 
+	@Interceptors(LogInterceptor.class)
 	public void setPassword(String password) {
 		this.password = password;
 	}

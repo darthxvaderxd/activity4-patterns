@@ -1,8 +1,13 @@
 package com.nilfactor.activity4.logic;
 
-import com.nilfactor.activity4.model.User;
+import javax.interceptor.Interceptors;
 
+import com.nilfactor.activity4.model.User;
+import com.nilfactor.activity4.util.LogInterceptor;
+
+@Interceptors(LogInterceptor.class)
 public class LoginService {
+	@Interceptors(LogInterceptor.class)
 	public static boolean isValidLogin(User user, String username, String password) {
 		System.out.print("Debug: username => " + username);
 		System.out.print("Debug: password => " + password);

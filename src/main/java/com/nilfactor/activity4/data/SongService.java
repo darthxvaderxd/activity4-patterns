@@ -6,13 +6,15 @@ import java.util.List;
 import com.nilfactor.activity4.model.SpotifyAlbum;
 import com.nilfactor.activity4.model.SpotifySong;
 import com.nilfactor.activity4.util.HibernateUtil;
+import com.nilfactor.activity4.util.LogInterceptor;
+import com.nilfactor.activity4.util.ServiceService;
 import com.nilfactor.activity4.util.SpotifyClient;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 import javax.inject.Named;
+import javax.interceptor.Interceptors;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -22,22 +24,25 @@ import org.hibernate.Transaction;
 @Named
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
+@Interceptors(LogInterceptor.class)
 public class SongService {
 	private List<SpotifySong> songs;
-	@Inject private SpotifyClient spotifyClient;
-	@Inject private AlbumService albumService;
-	@Inject private HibernateUtil hibernateUtil;
+	private SpotifyClient spotifyClient = ServiceService.getSpotifyClient();
+	private AlbumService albumService = ServiceService.getAlbumService();
+	private HibernateUtil hibernateUtil = ServiceService.getHibernateUtil();
 	
 	public SongService() {
 		
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	@PostConstruct
-	void init() {
+	public void init() {
 		songs = getSongs();
 	}
 	
 	/* C of CRUD */
+	@Interceptors(LogInterceptor.class)
 	public void saveSong(SpotifySong song) {
 		 Transaction transaction = null;
 	     try {
@@ -58,6 +63,7 @@ public class SongService {
 	 }
 	
 	/* R of CRUD */
+	@Interceptors(LogInterceptor.class)
 	@SuppressWarnings("unchecked")
 	public SpotifySong getById(String id) {
 		Transaction transaction = null;
@@ -88,6 +94,7 @@ public class SongService {
 		 return null;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	@SuppressWarnings("unchecked")
 	public List<SpotifySong> getSongsByAlbumId(String albumId) {
 		Transaction transaction = null;
@@ -119,6 +126,7 @@ public class SongService {
 	}
 	
 	/* D of CRUD */
+	@Interceptors(LogInterceptor.class)
 	public void deleteSong(SpotifySong song) {
 		Transaction transaction = null;
 		 try {
@@ -137,6 +145,7 @@ public class SongService {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Interceptors(LogInterceptor.class)
 	public List<SpotifySong> getSongs() {
 		 Transaction transaction = null;
 		 try {
@@ -169,15 +178,20 @@ public class SongService {
 		 return new ArrayList<SpotifySong>();
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	public int getSongCount() {
 		return songs.size();
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors(LogInterceptor.class)
 	public void addSong(SpotifySong song) {
 		SpotifyAlbum album = song.getSpotifyAlbum();
 		
 		if (album == null) {
+			if (albumService == null) {
+				albumService = new AlbumService();
+			}
 			song.setSpotifyAlbum(albumService.getAlbum(song.getAlbumId()));
 		}
 		saveSong(song);
@@ -185,12 +199,14 @@ public class SongService {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors(LogInterceptor.class)
 	public void removeSong(SpotifySong song) {
 		songs.remove(song);
 		deleteSong(song);
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors(LogInterceptor.class)
 	public SpotifySong getSong(String id) {
 		for (int i = 0; i < songs.size(); i += 1) {
 			SpotifySong song = songs.get(i);
@@ -203,6 +219,7 @@ public class SongService {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors(LogInterceptor.class)
 	public void addSongs(List<SpotifySong> s) {
 		for (int i = 0; i < s.size(); i += 1) {
 			songs.add(s.get(i));
@@ -210,11 +227,13 @@ public class SongService {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors(LogInterceptor.class)
 	public List<SpotifySong> getAllSongs() {
 		return songs;
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors(LogInterceptor.class)
 	public List<SpotifySong> findSongForAlbum(String id) {
 		try {
 			return spotifyClient.lookupAlbumTracks(id, (long) 0);

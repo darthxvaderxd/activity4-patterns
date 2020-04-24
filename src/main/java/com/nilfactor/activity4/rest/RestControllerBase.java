@@ -2,9 +2,11 @@ package com.nilfactor.activity4.rest;
 import java.util.Base64;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import com.nilfactor.activity4.data.UserService;
 import com.nilfactor.activity4.model.User;
+import com.nilfactor.activity4.util.LogInterceptor;
 
 class RestControllerBase {
 	@Inject private UserService userService;
@@ -12,12 +14,14 @@ class RestControllerBase {
 	/*
 	 * This is for those who need to create the base64 encoded header value for Authorization
 	 */
+	@Interceptors(LogInterceptor.class)
 	protected String generateB64AuthString(String username, String password) {
 		String normalString = username + ":" + password;
 		String encodedString = Base64.getEncoder().encodeToString(normalString.getBytes());
 		return "Basic " + encodedString;
 	}
 	
+	@Interceptors(LogInterceptor.class)
 	protected boolean isUserAuthenticated(String authString) {
 		try {
 			String decodedAuth = "";
