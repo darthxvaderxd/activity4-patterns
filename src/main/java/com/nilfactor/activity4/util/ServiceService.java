@@ -14,9 +14,24 @@ public class ServiceService {
 	@Inject private static AlbumService albumService;
 	@Inject private static SongService songService;
 	@Inject private static HibernateUtil hibernateUtil;
+	@Inject private static LoggingService loggingService;
 	
+	@Interceptors(LogInterceptor.class)
+	public static LoggingService getLoggingService() {
+		if (loggingService == null) {
+			loggingService = LoggingService.getInstance();
+		}
+		return loggingService;
+	}
+	
+	@Interceptors(LogInterceptor.class)
+	public static void setLoggingService(LoggingService ls) {
+		loggingService = ls;
+	}
+	
+	@Interceptors(LogInterceptor.class)
 	public static Logger getLogger(String className) {
-		return Logger.getLogger(className);
+		return getLoggingService().getLogger(className);
 	}
 	
 	@Interceptors(LogInterceptor.class)
